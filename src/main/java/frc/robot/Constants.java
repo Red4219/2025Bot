@@ -317,6 +317,8 @@ public final class Constants {
 		//public static double D = 0.02;
 		public static double D = 0.0;
 
+		public static int limitSwitch_id = 3;
+
 		public static double Start = 1.0;
 		//public static double Start = -0.4;  // Bore encoder testing
 		public static double Stopped = 0.0;

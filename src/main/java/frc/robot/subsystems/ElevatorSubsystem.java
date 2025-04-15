@@ -87,7 +87,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 isSim = true;
             }
             
-            limitSwitch = new DigitalInput(0);
+            limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
             motor = new SparkMax(Constants.ElevatorConstants.motor_id, MotorType.kBrushless);
             motor2 = new SparkMax(Constants.ElevatorConstants.motor2_id, MotorType.kBrushless);
 
