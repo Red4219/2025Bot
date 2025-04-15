@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalInput;
+
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -56,6 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkMax motor2 = null;
     private SparkMaxSim motor2Sim = null;
     private SparkClosedLoopController pid = null;
+    private DigitalInput limitSwitch = null;
     /*private ProfiledPIDController profiledPIDController = new ProfiledPIDController(
         0.1,
         0.0, 
@@ -83,7 +86,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             } else {
                 isSim = true;
             }
-
+            
+            limitSwitch = new DigitalInput(0);
             motor = new SparkMax(Constants.ElevatorConstants.motor_id, MotorType.kBrushless);
             motor2 = new SparkMax(Constants.ElevatorConstants.motor2_id, MotorType.kBrushless);
 
@@ -188,6 +192,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         if (Constants.kEnableElevator) {
             pid.setReference(targetPosition, ControlType.kPosition);
             //pid.setReference(targetPosition, SparkBase.ControlType.kMAXMotionPositionControl);
+            resetEncoder();
 
             // Try to do a setReference using a Feed Forward
             /*pid.setReference(
@@ -217,6 +222,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void setConfig() {
+
+        resetEncoder();
+
         // Vortex
         config = new SparkMaxConfig();
 
@@ -341,7 +349,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
-        motor.getEncoder().setPosition(0.0);
+        // motor.getEncoder().setPosition(0.0);
+        if (limitSwitch.get()){
+            return;
+        } else {
+            motor.getEncoder().setPosition(0.0);
+        }
     }
 
     /*public boolean atTargetPosition() {
