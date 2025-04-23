@@ -26,14 +26,15 @@ import frc.robot.Constants;
 public class ClimbSubsystem extends SubsystemBase {
   
   public enum ClimberState {
-    EXTENDED,
-    RETRACTED
+    STOPPED,
+    EXTEND,
+    RETRACT
   }
 
-  private double climberExtended;
-  private double climberRetracted;
+  private double climberExtendSpeed;
+  private double climberRetractSpeed;
 
-  public ClimberState state = ClimberState.RETRACTED;
+  public ClimberState state = ClimberState.STOPPED;
 
   private double p = Constants.ClimbConstants.P;
   private double i = Constants.ClimbConstants.I;
@@ -42,11 +43,11 @@ public class ClimbSubsystem extends SubsystemBase {
   private SparkMax motor = new SparkMax(Constants.ClimbConstants.motor_id, MotorType.kBrushless);
   private SparkMaxConfig config = new SparkMaxConfig();
   private SparkClosedLoopController pid = null;
-  private double targetPosition = 0.0;
+  private double targetVelocity = 0.0;
 
   public ClimbSubsystem() {
-    climberExtended = Constants.ClimbConstants.climberExtended;
-    climberRetracted = Constants.ClimbConstants.climberRetracted;
+    climberExtendSpeed = Constants.ClimbConstants.climberExtendSpeed;
+    climberRetractSpeed = Constants.ClimbConstants.climberRetractSpeed;
     setConfig();
 
     if (Constants.kEnableDebugEndEffector) {
@@ -60,7 +61,7 @@ public class ClimbSubsystem extends SubsystemBase {
                     // .withWidget(BuiltInWidgets.kTextView);
 
                 Shuffleboard.getTab("Climber")
-                    .addDouble("Target", this::getTargetPosition)
+                    .addDouble("Target Velocity", this::getTargetVelocity)
                     .withWidget(BuiltInWidgets.kTextView);
 
                 // Shuffleboard.getTab("End Effector")
@@ -81,7 +82,7 @@ public class ClimbSubsystem extends SubsystemBase {
             //.inverted(false) // bore encoder testing
             .inverted(true)
             //.smartCurrentLimit(200)
-            .idleMode(IdleMode.kCoast);
+            .idleMode(IdleMode.kBrake);
         //config.encoder
             //.positionConversionFactor(25)
             //.velocityConversionFactor(25);
@@ -122,11 +123,14 @@ public class ClimbSubsystem extends SubsystemBase {
     this.state = newState;
 
     switch (this.state) {
-      case EXTENDED:
-        targetPosition = climberExtended;
+      case STOPPED:
+        targetVelocity = 0.0;
         break;
-      case RETRACTED:
-        targetPosition = climberRetracted;
+      case EXTEND:
+        targetVelocity = climberExtendSpeed;
+        break;
+      case RETRACT:
+        targetVelocity = -climberRetractSpeed;
         break;
     }
   }
@@ -136,33 +140,33 @@ public class ClimbSubsystem extends SubsystemBase {
     return motor.getEncoder().getPosition();
   }
 
-  private double getP(){
-    return p;
-  }
-  private double getI(){
-    return i;
-  }
-  private double getD(){
-    return d;
-  }
-  private void setP(double p){
-    this.p = p; 
-    setConfig();
-  }
-  private void setI(double i){
-    this.i = i; 
-    setConfig();
-  }
-  private void setD(double d){
-    this.d = d; 
-    setConfig();
-  }
+  // private double getP(){
+  //   return p;
+  // }
+  // private double getI(){
+  //   return i;
+  // }
+  // private double getD(){
+  //   return d;
+  // }
+  // private void setP(double p){
+  //   this.p = p; 
+  //   setConfig();
+  // }
+  // private void setI(double i){
+  //   this.i = i; 
+  //   setConfig();
+  // }
+  // private void setD(double d){
+  //   this.d = d; 
+  //   setConfig();
+  // }
 
-  private double getTargetPosition(){
-    return targetPosition;
+  private double getTargetVelocity(){
+    return targetVelocity;
   }
-  private void setTargetPosition(double targetPosition){
-    this.targetPosition = targetPosition; 
+  public void setTargetVelocity(double targetVelocity){
+    this.targetVelocity = targetVelocity; 
   }
 
   /**
@@ -174,9 +178,7 @@ public class ClimbSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.ClimbConstants.climberEnabled){
-      pid.setReference(targetPosition, ControlType.kPosition);
-    }
+    motor.set(targetVelocity);
   }
 
 
@@ -185,10 +187,10 @@ public class ClimbSubsystem extends SubsystemBase {
         builder.setSmartDashboardType("RobotPreferences");
         //builder.setActuator(true);
         //builder.setSafeState(this::disable);
-        builder.addDoubleProperty("D", this::getD, this::setD);
-        builder.addDoubleProperty("I", this::getI, this::setI);
-        builder.addDoubleProperty("P", this::getP, this::setP);
-        builder.addDoubleProperty("Target", this::getTargetPosition, this::setTargetPosition);
+        // builder.addDoubleProperty("D", this::getD, this::setD);
+        // builder.addDoubleProperty("I", this::getI, this::setI);
+        // builder.addDoubleProperty("P", this::getP, this::setP);
+        builder.addDoubleProperty("Target Velocity", this::getTargetVelocity, this::setTargetVelocity);
         builder.addDoubleProperty("Position", this::getPosition,null);
         
     }

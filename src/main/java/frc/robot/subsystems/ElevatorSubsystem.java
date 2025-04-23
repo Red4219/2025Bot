@@ -87,7 +87,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 isSim = true;
             }
             
-            limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
+            // limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
             motor = new SparkMax(Constants.ElevatorConstants.motor_id, MotorType.kBrushless);
             motor2 = new SparkMax(Constants.ElevatorConstants.motor2_id, MotorType.kBrushless);
 
@@ -192,7 +192,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         if (Constants.kEnableElevator) {
             pid.setReference(targetPosition, ControlType.kPosition);
             //pid.setReference(targetPosition, SparkBase.ControlType.kMAXMotionPositionControl);
-            resetEncoder();
+            // resetEncoder();
 
             // Try to do a setReference using a Feed Forward
             /*pid.setReference(
@@ -223,7 +223,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private void setConfig() {
 
-        resetEncoder();
+        // resetEncoder();
 
         // Vortex
         config = new SparkMaxConfig();
@@ -349,18 +349,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
-        // motor.getEncoder().setPosition(0.0);
-        if (limitSwitch.get()){
-            // motor.getEncoder().setPosition(0.0);
-            return;
-        } else {
-            motor.getEncoder().setPosition(0.0);
-        }
+        motor.getEncoder().setPosition(0);
     }
 
-    public boolean getLimitSwitch() {
-        return limitSwitch.get();
-    }
+ 
 
     /*public boolean atTargetPosition() {
         return profiledPIDController.atSetpoint();
@@ -377,7 +369,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         builder.addDoubleProperty("Target", this::getTargetPosition, this::setTargetPosition);
         builder.addDoubleProperty("Position", this::getPosition,null);
         builder.addBooleanProperty("At Target Position", this::atTargetPosition,null);
-        builder.addBooleanProperty("Limit Switch On", this::getLimitSwitch, null);
-        builder.addDoubleProperty("Revolutions", this::getRevolutions,null);
+        // builder.addBooleanProperty("Limit Switch On", this::getLimitSwitch, null);
+        // builder.addDoubleProperty("Revolutions", this::getRevolutions,null);
     }
 }

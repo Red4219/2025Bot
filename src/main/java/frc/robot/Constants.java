@@ -39,8 +39,8 @@ public final class Constants {
 	public static boolean kDebugLimelight = true;
 	
 	// Arm
-	public static boolean kEnableArm = false;
-	public static boolean kEnableDebugArm = false;
+	public static boolean kEnableArm = true;
+	public static boolean kEnableDebugArm = true;
 
 	// Elevator
 	public static boolean kEnableElevator = true;
@@ -240,8 +240,8 @@ public final class Constants {
 		public static boolean climberEnabled = true;
 		public static int motor_id = 30;
 
-		public static double climberExtended = 0.0;
-		public static double climberRetracted = 0.0;
+		public static double climberExtendSpeed = 0.35;
+		public static double climberRetractSpeed = 0.35;
 		public static double P = 0.1;
 		public static double I = 0.0;
 		public static double D = 0.0;
@@ -330,7 +330,7 @@ public final class Constants {
 		//public static double D = 0.02;
 		public static double D = 0.0;
 
-		public static int limitSwitch_id = 3;
+		public static int limitSwitch_id = 1;
 
 		public static double Start = 1.0;
 		//public static double Start = -0.4;  // Bore encoder testing

@@ -5,6 +5,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.ClimbSubsystem.ClimberState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 
@@ -22,20 +23,22 @@ public class ClimberDownCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        finished = true;
+        finished = false;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         if (Constants.ClimbConstants.climberEnabled){
-            climbSubsystem.setState(ClimbSubsystem.ClimberState.RETRACTED);
+            climbSubsystem.setState(ClimbSubsystem.ClimberState.RETRACT);
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+
+    }
 
     // Returns true when the command should end.
     @Override
