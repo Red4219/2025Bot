@@ -366,11 +366,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         motor.getEncoder().setPosition(0);
     }
 
-    /*
-     * public boolean atTargetPosition() {
-     * return profiledPIDController.atSetpoint();
-     * }
-     */
+    /*public boolean atTargetPosition() {
+        return profiledPIDController.atSetpoint();
+    }*/
 
     @Override
     public void initSendable(SendableBuilder builder) {
