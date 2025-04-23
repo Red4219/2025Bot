@@ -39,8 +39,8 @@ public final class Constants {
 	public static boolean kDebugLimelight = true;
 	
 	// Arm
-	public static boolean kEnableArm = false;
-	public static boolean kEnableDebugArm = false;
+	public static boolean kEnableArm = true;
+	public static boolean kEnableDebugArm = true;
 
 	// Elevator
 	public static boolean kEnableElevator = true;
