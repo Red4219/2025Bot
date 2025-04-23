@@ -54,6 +54,7 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.EndEffectorSubsystem.EndEffectorState;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ClimbSubsystem;
 
 public class RobotContainer {
 
@@ -64,6 +65,7 @@ public class RobotContainer {
 	public static final ArmSubsystem armSubsystem = new ArmSubsystem();
 	public static final EndEffectorSubsystem endEffectorSubsystem = new EndEffectorSubsystem();
 	public static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 	public static final LED led1 = new LED(0);
 	
 	// This is required by pathplanner

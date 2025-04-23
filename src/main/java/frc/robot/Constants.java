@@ -39,8 +39,8 @@ public final class Constants {
 	public static boolean kDebugLimelight = true;
 	
 	// Arm
-	public static boolean kEnableArm = true;
-	public static boolean kEnableDebugArm = true;
+	public static boolean kEnableArm = false;
+	public static boolean kEnableDebugArm = false;
 
 	// Elevator
 	public static boolean kEnableElevator = true;
@@ -235,6 +235,19 @@ public final class Constants {
 		public static double visionMeasurementStdDevsTheta = Units.degreesToRadians(10);
 	}
 
+	public static class ClimbConstants {
+
+		public static boolean climberEnabled = true;
+		public static int motor_id = 30;
+
+		public static double climberExtended = 0.0;
+		public static double climberRetracted = 0.0;
+		public static double P = 0.1;
+		public static double I = 0.0;
+		public static double D = 0.0;
+
+
+	}
 	public static class ArmConstants {
 		// how high the arm goes to clear a stuck coral on the battery
 		public static double ClearCoral = .30; 
@@ -279,19 +292,19 @@ public final class Constants {
 
 	public static class EndEffectorConstants {
 		public static double StoppedMotor1 = 0.0;
-		public static double StoppedMotor2 = 0.0;
+		// public static double StoppedMotor2 = 0.0;
 		public static double IntakeHoldAlgaeMotor1 = -0.1;
-		public static double IntakeHoldAlgaeMotor2 = -0.1;
+		// public static double IntakeHoldAlgaeMotor2 = -0.1;
 		public static double IntakeAlgaeFloorMotor1 = -0.15;
-		public static double IntakeAlgaeFloorMotor2 = -0.2;
+		// public static double IntakeAlgaeFloorMotor2 = -0.2;
 		public static double IntakeCoralHumanElementMotor1 = 0.0;
-		public static double IntakeCoralHumanElementMotor2 = -0.25;
+		// public static double IntakeCoralHumanElementMotor2 = -0.25;
 		public static double EjectAlgaeFloorMotor1 = 0.2;
-		public static double EjectAlgaeFloorMotor2 = 0.2;
+		// public static double EjectAlgaeFloorMotor2 = 0.2;
 		public static double EjectCoralMotor1 = 0.5;
-		public static double EjectCoralMotor2 = 0.0;
+		// public static double EjectCoralMotor2 = 0.0;
 		public static double EjectCoralMotor1Slow = 0.2;
-		public static double EjectCoralMotor2Slow = 0.0;
+		// public static double EjectCoralMotor2Slow = 0.0;
 		
 		//public static double P = 1.5;
 		public static double P = 1.0;
@@ -299,8 +312,8 @@ public final class Constants {
 		//public static double D = 0.0;
 		public static double D = 0.01;
 
-		public static int motor_id = 18;
-		public static int motor2_id = 19;
+		public static int motor_id = 19;
+		// public static int motor2_id = 19;
 
 		public static double OutputCurrentLimitMotor1 = 150.0;
 		public static double OutputCurrentLimitMotor2 = 5.0;

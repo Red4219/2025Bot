@@ -351,10 +351,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void resetEncoder() {
         // motor.getEncoder().setPosition(0.0);
         if (limitSwitch.get()){
+            // motor.getEncoder().setPosition(0.0);
             return;
         } else {
             motor.getEncoder().setPosition(0.0);
         }
+    }
+
+    public boolean getLimitSwitch() {
+        return limitSwitch.get();
     }
 
     /*public boolean atTargetPosition() {
@@ -372,6 +377,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         builder.addDoubleProperty("Target", this::getTargetPosition, this::setTargetPosition);
         builder.addDoubleProperty("Position", this::getPosition,null);
         builder.addBooleanProperty("At Target Position", this::atTargetPosition,null);
+        builder.addBooleanProperty("Limit Switch On", this::getLimitSwitch, null);
         builder.addDoubleProperty("Revolutions", this::getRevolutions,null);
     }
 }
