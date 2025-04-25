@@ -250,31 +250,31 @@ public final class Constants {
 	}
 	public static class ArmConstants {
 		// how high the arm goes to clear a stuck coral on the battery
-		public static double ClearCoral = .30; 
+		public static double ClearCoral = .103; 
 		//public static double CoralL4 = -0.9;
-		public static double CoralL4 = 0.171; // using bore encoder
+		public static double CoralL4 = 0.526; // using bore encoder
 		//public static double CoralL3 = -2.738;
-		public static double CoralL3 = 0.14; // using bore encoder
+		public static double CoralL3 = 0.526; // using bore encoder
 		//public static double CoralL2 = -0.9;
-		public static double CoralL2 = 0.55; // using bore encoder
+		public static double CoralL2 = 0.383; // using bore encoder
 		//public static double CoralL1 = -10.0;
-		public static double CoralL1 = 0.55; // using bore encoder
+		public static double CoralL1 = 0.071; // using bore encoder
 		//public static double CoralHuman = -0.462;
-		public static double CoralHuman = 0.596; // using bore encoder
+		public static double CoralHuman = 0.094; // using bore encoder
 		//public static double AlgaeL1 = -0.9;
-		public static double AlgaeL1 = 0.34; // using bore encoder
+		public static double AlgaeL1 = 0.103; // using bore encoder
 		//public static double AlgaeL2 = -0.9;
-		public static double AlgaeL2 = 0.245; // using bore encoder;
+		public static double AlgaeL2 = 0.103; // using bore encoder;
 		//public static double AlgaeL3 = -0.9;
-		public static double AlgaeL3 = 0.171; // using bore encoder;
+		public static double AlgaeL3 = 0.103; // using bore encoder;
 		//public static double AlgaeShoot = -0.9;
-		public static double AlgaeShoot = 0.171; // using bore encoder
+		public static double AlgaeShoot = 0.103; // using bore encoder
 		//public static double AlgaeHuman = -0.9;
-		public static double AlgaeHuman = 0.905; // using bore encoder
+		public static double AlgaeHuman = 0.103; // using bore encoder
 		//public static double AlgaeFloor = -10;
-		public static double AlgaeFloor = 0.49; // using bore encoder
+		public static double AlgaeFloor = 0.103; // using bore encoder
 
-		public static double Start = 0.55; // using bore encoder
+		public static double Start = 0.103; // using bore encoder
 
 		//public static double P = 1.5;
 		//public static double P = 0.05;
@@ -297,7 +297,7 @@ public final class Constants {
 		// public static double IntakeHoldAlgaeMotor2 = -0.1;
 		public static double IntakeAlgaeFloorMotor1 = -0.15;
 		// public static double IntakeAlgaeFloorMotor2 = -0.2;
-		public static double IntakeCoralHumanElementMotor1 = 0.0;
+		public static double IntakeCoralHumanElementMotor1 = .25;
 		// public static double IntakeCoralHumanElementMotor2 = -0.25;
 		public static double EjectAlgaeFloorMotor1 = 0.2;
 		// public static double EjectAlgaeFloorMotor2 = 0.2;
@@ -324,19 +324,19 @@ public final class Constants {
 		public static int motor_id = 33;
 		public static int motor2_id = 32;
 		//public static double P = 0.1; // bore encoder testing
-		public static double P = 0.06;
+		public static double P = 0.08;
 		//public static double P = 5;
-		public static double I = 0.00;
+		public static double I = 0.00006;
 		//public static double D = 0.02;
-		public static double D = 0.0;
+		public static double D = 0.2;
 
 		public static int limitSwitch_id = 1;
 
-		public static double Start = 1.0;
+		public static double Start = 0.0;
 		//public static double Start = -0.4;  // Bore encoder testing
 		public static double Stopped = 0.0;
 		//public static double CoralHuman = 5.0;
-		public static double CoralHuman = 4.15;
+		public static double CoralHuman = 0.0;
 		public static double CoralL4 = 14.167;
 		//public static double CoralL3 = 13.45;
 		public static double CoralL3 = .595;

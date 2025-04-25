@@ -163,6 +163,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
             // trying to set the state to the state we are already at
             // just returning to save cycles
             return;
+        } else{
+            this.state = state;
         }
 
         switch (state) {
@@ -236,6 +238,11 @@ public class EndEffectorSubsystem extends SubsystemBase {
 	public void periodic() {
 
         if (Constants.kEnableEndEffector) {
+            if (motor1OutputCurrent() >= 60){
+                setDesiredState(EndEffectorState.Stopped);
+                System.out.println("EndEffectorSubsystem::periodic() - Stopped");
+            }
+            // System.out.println(motor1OutputCurrent());   
 
             // if(!beamBreaker.get()) {
             //     hasCoral = true;
@@ -259,16 +266,15 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
             switch (state) {
                 case IntakeCoralHumanElement:
-                    if(motor.getOutputCurrent() >= 40) {
                         // we are trying to intake the coral and the beam breaker says we have it so
                         // stop the motors
-                        motor.set(0.0);
+                        
                         // motor2.set(0.0);
-                    } else {
+                    
                         // We don't have the coral so run the intake motors
-                        motor.set(targetVelocity1);
+                    motor.set(targetVelocity1);
                         // motor2.set(targetVelocity2);
-                    }
+                    
                     break;
                 case IntakeAlgaeFloor:                    
                     // Run the motors

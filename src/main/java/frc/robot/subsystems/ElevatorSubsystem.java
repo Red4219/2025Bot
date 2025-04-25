@@ -58,7 +58,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkMax motor2 = null;
     private SparkMaxSim motor2Sim = null;
     private SparkClosedLoopController pid = null;
-    private DigitalInput limitSwitch = null;
+    public final static DigitalInput limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
+
     /*private ProfiledPIDController profiledPIDController = new ProfiledPIDController(
         0.1,
         0.0, 
@@ -191,6 +192,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         if (Constants.kEnableElevator) {
             pid.setReference(targetPosition, ControlType.kPosition);
+            if (!limitSwitch.get()){
+                resetEncoder();
+            }
             //pid.setReference(targetPosition, SparkBase.ControlType.kMAXMotionPositionControl);
             // resetEncoder();
 
@@ -230,9 +234,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         config
             //.inverted(false) // bore encoder testing
-            .inverted(true)
+            .inverted(false)
             //.smartCurrentLimit(200)
-            .idleMode(IdleMode.kCoast);
+            .idleMode(IdleMode.kBrake);
         //config.encoder
             //.positionConversionFactor(25)
             //.velocityConversionFactor(25);
@@ -269,7 +273,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         SparkMaxConfig config2 = new SparkMaxConfig();
 
         config2
-            .idleMode(IdleMode.kCoast);
+            .idleMode(IdleMode.kBrake);
         config2.follow(Constants.ElevatorConstants.motor_id);
 
         motor2.configure(
@@ -314,7 +318,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean atTargetPosition() {
         // return true if we are just about at the target position
-        return Math.abs(targetPosition - currentPosition) < 0.05;
+        return Math.abs(targetPosition - currentPosition) < 0.1;
     }
 
     public double getP() {

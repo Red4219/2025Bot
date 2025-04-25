@@ -91,7 +91,7 @@ public class ArmSubsystem extends SubsystemBase {
                     .withWidget(BuiltInWidgets.kTextView);
 
                 Shuffleboard.getTab("Arm")
-                    .addDouble("Target", this::getPosition)
+                    .addDouble("Target", this::getTargetPosition)
                     .withWidget(BuiltInWidgets.kTextView);
 
                 SmartDashboard.putData(this);
@@ -190,7 +190,7 @@ public class ArmSubsystem extends SubsystemBase {
         config = new SparkMaxConfig();
 
         config
-            .inverted(false)
+            .inverted(true)
             .idleMode(IdleMode.kBrake);
         config.encoder
             .positionConversionFactor(9)
@@ -245,7 +245,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public boolean atTargetPosition() {
-        return profiledPIDController.atSetpoint();
+        return Math.abs(getPosition() - targetPosition) < 0.05;
     }
 
     public double getP() {

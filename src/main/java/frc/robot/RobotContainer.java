@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.tools.JoystickUtils;
 import frc.robot.tools.Limelight;
@@ -26,6 +27,7 @@ import frc.robot.commands.Algae1Command;
 import frc.robot.commands.Algae2Command;
 import frc.robot.commands.AlgaeFloorCommand;
 import frc.robot.commands.ArmStartCommand;
+import frc.robot.commands.ArmToLevel;
 import frc.robot.commands.AutoAlignLeftCommand;
 import frc.robot.commands.AutoAlignRightCommand;
 import frc.robot.commands.ClimberDownCommand;
@@ -51,6 +53,7 @@ import frc.robot.commands.autonomous.DelayCommand;
 import frc.robot.commands.autonomous.EjectCoralCommand;
 import frc.robot.commands.autonomous.IntakeCoralWaitCommand;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
@@ -75,7 +78,6 @@ public class RobotContainer {
 
 	private final CommandXboxController driverController = new CommandXboxController(0);
 	private final CommandXboxController operatorController = new CommandXboxController(1);
-	public final static DigitalInput limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
 
 		private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
@@ -125,22 +127,42 @@ public class RobotContainer {
 			if(RobotBase.isReal()) {
 				// Real, not a simulation
 	
-				if (!limitSwitch.get()){
-					elevatorSubsystem.resetEncoder();
-				}
+				
 	
 				// Coral stuck on battery command - repeat command if coral is still stuck.
 				// driverController.button(2).whileTrue(new FailsafeCoralCommand());
 				
 				
 				// Coral Commands
-				operatorController.button(3).whileTrue(new Coral1Command());
-				operatorController.button(4).whileTrue(new Coral2Command());
-				operatorController.button(2).whileTrue(new Coral3Command());
-				operatorController.button(10).whileTrue(new Coral4Command());
+				operatorController.button(3).whileTrue(new SequentialCommandGroup(
+					new ArmToLevel(),
+					new Coral1Command()
+
+				));
+				operatorController.button(4).whileTrue(new SequentialCommandGroup(
+					new ArmToLevel(),
+					new Coral2Command()
+
+				));
+				operatorController.button(2).whileTrue(new SequentialCommandGroup(
+					new ArmToLevel(),
+					new Coral3Command()
+
+				));
+				operatorController.button(10).whileTrue(new SequentialCommandGroup(
+					new ArmToLevel(),
+					new Coral4Command()
+
+				));
 				
 				// Intake coral from human element
-				operatorController.button(8).whileTrue(new CoralHumanCommand());
+				operatorController.button(8).whileTrue(new SequentialCommandGroup(
+		
+					new ElevatorStartCommand(),
+					new ArmStartCommand(),
+					new CoralHumanCommand()
+				)
+				);
 	
 				// Algae Commands
 				// This is for the floor algae, press again to stop
