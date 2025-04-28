@@ -183,7 +183,8 @@ public final class Constants {
 	}
 
 	public static class LimelightConstants {
-		public static String name = "limelight";
+		public static String name1 = "limelight-left";
+		public static String name2 = "limelight-right";
 	}
 
 	public static class PhotonVisionConstants {
@@ -252,9 +253,9 @@ public final class Constants {
 		// how high the arm goes to clear a stuck coral on the battery
 		public static double ClearCoral = .103; 
 		//public static double CoralL4 = -0.9;
-		public static double CoralL4 = 0.53; // using bore encoder
+		public static double CoralL4 = 0.5258; // using bore encoder
 		//public static double CoralL3 = -2.738;
-		public static double CoralL3 = 0.526; // using bore encoder
+		public static double CoralL3 = 0.546; // using bore encoder
 		//public static double CoralL2 = -0.9;
 		public static double CoralL2 = 0.383; // using bore encoder
 		//public static double CoralL1 = -10.0;
@@ -337,9 +338,9 @@ public final class Constants {
 		public static double Stopped = 0.0;
 		//public static double CoralHuman = 5.0;
 		public static double CoralHuman = 0.0;
-		public static double CoralL4 = 13.75;
+		public static double CoralL4 = 13.833;
 		//public static double CoralL3 = 13.45;
-		public static double CoralL3 = .595;
+		public static double CoralL3 = 3.875;
 		public static double CoralL2 = 11.167;
 		public static double CoralL1 = 6.5;
 		public static double AlgaeHuman = 1.0;

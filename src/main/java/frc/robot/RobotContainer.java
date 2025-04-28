@@ -65,7 +65,8 @@ public class RobotContainer {
 
 	public static final Field2d field = new Field2d();
 	public static final PhotonVision photonVision = new PhotonVision();
-	public static final Limelight limelight = new Limelight();
+	public static final Limelight limelightL = new Limelight("limelight-left");
+	public static final Limelight limelightR = new Limelight("limelight-right");
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 	public static final ArmSubsystem armSubsystem = new ArmSubsystem();
 	public static final EndEffectorSubsystem endEffectorSubsystem = new EndEffectorSubsystem();

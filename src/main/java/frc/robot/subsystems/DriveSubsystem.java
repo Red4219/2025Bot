@@ -141,7 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		if(Constants.kEnableLimelight) {
-			_limeLight = RobotContainer.limelight;
+			_limeLight = RobotContainer.limelightL;
 		}
 
 		if(RobotBase.isReal()) {

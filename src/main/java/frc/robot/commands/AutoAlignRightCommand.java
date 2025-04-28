@@ -26,7 +26,7 @@ public class AutoAlignRightCommand extends Command{
     public AutoAlignRightCommand() {
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
-        this.limelight = RobotContainer.limelight;
+        this.limelight = RobotContainer.limelightL;
         this.armSubsystem = RobotContainer.armSubsystem;
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);
@@ -43,8 +43,8 @@ public class AutoAlignRightCommand extends Command{
     @Override
     public void execute() {
         if(limelight.hasTarget()) {
-            aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name);            
-            int error = (int) (6.5 - aprilTagLocation);
+            aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);            
+            int error = (int) (3.29 - aprilTagLocation);
             double kP = 0.005;
 
             if(Math.abs(error) <4) {
