@@ -206,7 +206,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                 break;
             case EjectCoralBack:
                 System.out.println(("EndEffectorSubsystem::setDesiredState() - EjectCoralBack"));
-                targetVelocity1 = -Constants.EndEffectorConstants.EjectCoralMotor1;
+                targetVelocity1 = Constants.EndEffectorConstants.EjectCoralMotor1;
                 // targetVelocity2 = -Constants.EndEffectorConstants.EjectCoralMotor2;
                 break;
             case EjectCoralFrontNoCheck:
@@ -216,7 +216,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                 break;
             case EjectCoralBackNoCheck:
                 System.out.println(("EndEffectorSubsystem::setDesiredState() - EjectCoralBackNoCheck"));
-                targetVelocity1 = -Constants.EndEffectorConstants.EjectCoralMotor1;
+                targetVelocity1 = Constants.EndEffectorConstants.EjectCoralMotor1;
                 // targetVelocity2 = -Constants.EndEffectorConstants.EjectCoralMotor2;
                 break;
             case IntakeHoldAlgae:
@@ -238,7 +238,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 	public void periodic() {
 
         if (Constants.kEnableEndEffector) {
-            if (motor1OutputCurrent() >= 60){
+            if (motor1OutputCurrent() >= 60 && this.state == EndEffectorState.IntakeCoralHumanElement) {
                 setDesiredState(EndEffectorState.Stopped);
                 System.out.println("EndEffectorSubsystem::periodic() - Stopped");
             }
@@ -292,7 +292,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                     //if(hasCoral) {
                         // we have the coral so eject it
                         // motor2.set(targetVelocity1);
-                        motor.set(targetVelocity2);
+                        motor.set(targetVelocity1);
                     /* } else {
                         // we don't have the coral so stop the motors
                         motor.set(0.0);
@@ -304,7 +304,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                         //System.out.println("ejecting the back");
                         // we have the coral so eject it
                         // motor2.set(targetVelocity1);
-                        motor.set(targetVelocity2);
+                        motor.set(targetVelocity1);
                     /* } else {
                         // we don't have the coral so stop the motors
                         motor.set(0.0);
@@ -324,7 +324,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                     motor.set(0.0);
                     // motor2.set(0.0);
                 default:
-                    //motor.set(targetVelocity1);
+                    motor.set(targetVelocity1);
                     //motor2.set(targetVelocity2);
                     break;
             }
@@ -391,7 +391,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
 
     public boolean hasCoral() {
-        return this.hasCoral;
+        return false;
     }
 
     public double getVelocity1() {

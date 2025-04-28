@@ -134,22 +134,22 @@ public class RobotContainer {
 				
 				
 				// Coral Commands
-				operatorController.button(3).whileTrue(new SequentialCommandGroup(
+				operatorController.button(3).onTrue(new SequentialCommandGroup(
 					new ArmToLevel(),
 					new Coral1Command()
 
 				));
-				operatorController.button(4).whileTrue(new SequentialCommandGroup(
+				operatorController.button(4).onTrue(new SequentialCommandGroup(
 					new ArmToLevel(),
 					new Coral2Command()
 
 				));
-				operatorController.button(2).whileTrue(new SequentialCommandGroup(
+				operatorController.button(2).onTrue(new SequentialCommandGroup(
 					new ArmToLevel(),
 					new Coral3Command()
 
 				));
-				operatorController.button(10).whileTrue(new SequentialCommandGroup(
+				operatorController.button(10).onTrue(new SequentialCommandGroup(
 					new ArmToLevel(),
 					new Coral4Command()
 
@@ -190,9 +190,10 @@ public class RobotContainer {
 				//driverController.button(3).whileTrue(new StartCommand());
 				operatorController.button(1).whileTrue(new SequentialCommandGroup(
 					new EndEffectorStopCommand(),
-					new ArmStartCommand(),
+					
 					//new RunCommand(() -> elevatorSubsystem.setDesiredState(ElevatorState.Start))
-					new ElevatorStartCommand()
+					new ElevatorStartCommand(),
+					new ArmStartCommand()
 					// new ResetElevatorEncoder()
 				));
 	

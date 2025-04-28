@@ -60,13 +60,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkClosedLoopController pid = null;
     public final static DigitalInput limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
 
-    /*private ProfiledPIDController profiledPIDController = new ProfiledPIDController(
-        0.1,
-        0.0, 
-        0.1, 
-        new TrapezoidProfile.Constraints(2, 2),
-        0.02
-    );*/ 
+    /*
+     * private ProfiledPIDController profiledPIDController = new
+     * ProfiledPIDController(
+     * 0.1,
+     * 0.0,
+     * 0.1,
+     * new TrapezoidProfile.Constraints(2, 2),
+     * 0.02
+     * );
+     */
     private SparkMaxConfig config = new SparkMaxConfig();
     private double p = Constants.ElevatorConstants.P;
     private double i = Constants.ElevatorConstants.I;
@@ -80,19 +83,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
 
-        if(Constants.kEnableElevator) {
+        if (Constants.kEnableElevator) {
 
             if (RobotBase.isReal()) {
                 isSim = false;
             } else {
                 isSim = true;
             }
-            
+
             // limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
             motor = new SparkMax(Constants.ElevatorConstants.motor_id, MotorType.kBrushless);
             motor2 = new SparkMax(Constants.ElevatorConstants.motor2_id, MotorType.kBrushless);
 
-            if(isSim) {
+            if (isSim) {
                 motorSim = new SparkMaxSim(motor, DCMotor.getNEO(1));
                 motor2Sim = new SparkMaxSim(motor2, DCMotor.getNEO(1));
             }
@@ -101,17 +104,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
             pid = motor.getClosedLoopController();
 
-            
-
             if (Constants.kEnableDebugElevator) {
 
                 Shuffleboard.getTab("Elevator")
-                    .addDouble("Position", this::getPosition)
-                    .withWidget(BuiltInWidgets.kTextView);
+                        .addDouble("Position", this::getPosition)
+                        .withWidget(BuiltInWidgets.kTextView);
 
                 Shuffleboard.getTab("Elevator")
-                    .addDouble("Target", this::getPosition)
-                    .withWidget(BuiltInWidgets.kTextView);
+                        .addDouble("Target", this::getPosition)
+                        .withWidget(BuiltInWidgets.kTextView);
 
                 SmartDashboard.putData(this);
                 Shuffleboard.getTab("Elevator").add(this);
@@ -120,65 +121,65 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setDesiredState(ElevatorState state) {
-        if(this.state == state) {
+        if (this.state == state) {
             // trying to set the state to the state we are already at
             // just returning to save cycles
             return;
         }
 
-        // Are we sending the same state again?  If so act like a toggle and stop
-        //if (this.state == state) {
-        //    targetPosition = Constants.SliderConstants.Stopped;
-        //} else {
+        // Are we sending the same state again? If so act like a toggle and stop
+        // if (this.state == state) {
+        // targetPosition = Constants.SliderConstants.Stopped;
+        // } else {
 
-            switch (state) {
-                case Start:
-                    targetPosition = Constants.ElevatorConstants.Start;
-                    break;
-                case CoralHuman:
-                    targetPosition = Constants.ElevatorConstants.CoralHuman;
-                    break;
-                case CoralL4:
-                    targetPosition = Constants.ElevatorConstants.CoralL4;
-                    break;
-                case CoralL3:
-                    targetPosition = Constants.ElevatorConstants.CoralL3;
-                    break;
-                case CoralL2:
-                    targetPosition = Constants.ElevatorConstants.CoralL2;
-                    break;
-                case CoralL1:
-                    targetPosition = Constants.ElevatorConstants.CoralL1;
-                    break;
-                case AlgaeL3:
-                    targetPosition = Constants.ElevatorConstants.AlgaeL3;
-                    break;
-                case AlgaeL2:
-                    targetPosition = Constants.ElevatorConstants.AlgaeL2;
-                    break;
-                case AlgaeL1:
-                    targetPosition = Constants.ElevatorConstants.AlgaeL1;
-                    break;
-                case AlgaeShoot:
-                    targetPosition = Constants.ElevatorConstants.AlgaeShoot;
-                    break;
-                case AlgaeHuman:
-                    targetPosition = Constants.ElevatorConstants.AlgaeHuman;
-                    break;
-                case AlgaeFloor:
-                    targetPosition = Constants.ElevatorConstants.AlgaeFloor;
-                    break;
-                case ClimberUp:
-                    targetPosition = Constants.ElevatorConstants.ClimberUp;
-                    break;
-                case ClimberDown:
-                    targetPosition = Constants.ElevatorConstants.ClimberDown;
-                    break;
-                default:
-                    targetPosition = 0.0;
-                    break;
-            }
-        //}
+        switch (state) {
+            case Start:
+                targetPosition = Constants.ElevatorConstants.Start;
+                break;
+            case CoralHuman:
+                targetPosition = Constants.ElevatorConstants.CoralHuman;
+                break;
+            case CoralL4:
+                targetPosition = Constants.ElevatorConstants.CoralL4;
+                break;
+            case CoralL3:
+                targetPosition = Constants.ElevatorConstants.CoralL3;
+                break;
+            case CoralL2:
+                targetPosition = Constants.ElevatorConstants.CoralL2;
+                break;
+            case CoralL1:
+                targetPosition = Constants.ElevatorConstants.CoralL1;
+                break;
+            case AlgaeL3:
+                targetPosition = Constants.ElevatorConstants.AlgaeL3;
+                break;
+            case AlgaeL2:
+                targetPosition = Constants.ElevatorConstants.AlgaeL2;
+                break;
+            case AlgaeL1:
+                targetPosition = Constants.ElevatorConstants.AlgaeL1;
+                break;
+            case AlgaeShoot:
+                targetPosition = Constants.ElevatorConstants.AlgaeShoot;
+                break;
+            case AlgaeHuman:
+                targetPosition = Constants.ElevatorConstants.AlgaeHuman;
+                break;
+            case AlgaeFloor:
+                targetPosition = Constants.ElevatorConstants.AlgaeFloor;
+                break;
+            case ClimberUp:
+                targetPosition = Constants.ElevatorConstants.ClimberUp;
+                break;
+            case ClimberDown:
+                targetPosition = Constants.ElevatorConstants.ClimberDown;
+                break;
+            default:
+                targetPosition = 0.0;
+                break;
+        }
+        // }
 
         this.state = state;
     }
@@ -188,30 +189,39 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     @Override
-	public void periodic() {
+    public void periodic() {
 
         if (Constants.kEnableElevator) {
             pid.setReference(targetPosition, ControlType.kPosition);
-            if (!limitSwitch.get()){
+            if (!limitSwitch.get()) {
                 resetEncoder();
+                if (this.state == ElevatorState.Start) {
+                    motor.set(0);
+                }
             }
-            //pid.setReference(targetPosition, SparkBase.ControlType.kMAXMotionPositionControl);
+            
+            // pid.setReference(targetPosition,
+            // SparkBase.ControlType.kMAXMotionPositionControl);
             // resetEncoder();
 
             // Try to do a setReference using a Feed Forward
-            /*pid.setReference(
-                targetPosition,
-                ControlType.kPosition,
-                ClosedLoopSlot.kSlot0,
-                elevatorFeedforward.calculate(
-                    motor.getEncoder().getVelocity()
-                )
-            );*/
+            /*
+             * pid.setReference(
+             * targetPosition,
+             * ControlType.kPosition,
+             * ClosedLoopSlot.kSlot0,
+             * elevatorFeedforward.calculate(
+             * motor.getEncoder().getVelocity()
+             * )
+             * );
+             */
 
-            /*motor.set(
-                profiledPIDController.calculate(motor.getAbsoluteEncoder().getPosition(), targetPosition)
-            );*/
-
+            /*
+             * motor.set(
+             * profiledPIDController.calculate(motor.getAbsoluteEncoder().getPosition(),
+             * targetPosition)
+             * );
+             */
 
             if (isSim) {
                 motorSim.iterate(
@@ -219,8 +229,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                         // desiredState.speedMetersPerSecond,
                         motor.getOutputCurrent(),
                         RoboRioSim.getVInVoltage(), // Simulated battery voltage, in Volts
-                        0.02
-                    );
+                        0.02);
             }
         }
     }
@@ -233,78 +242,79 @@ public class ElevatorSubsystem extends SubsystemBase {
         config = new SparkMaxConfig();
 
         config
-            //.inverted(false) // bore encoder testing
-            .inverted(false)
-            //.smartCurrentLimit(200)
-            .idleMode(IdleMode.kBrake);
-        //config.encoder
-            //.positionConversionFactor(25)
-            //.velocityConversionFactor(25);
+                // .inverted(false) // bore encoder testing
+                .inverted(false)
+                // .smartCurrentLimit(200)
+                .idleMode(IdleMode.kBrake);
+        // config.encoder
+        // .positionConversionFactor(25)
+        // .velocityConversionFactor(25);
 
         config.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            //.feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            //.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-            //.feedbackSensor(FeedbackSensor.kAnalogSensor)
-            //.positionWrappingEnabled(true)
-		    .pid(
-			    p, 
-                i, 
-                d
-			);//.outputRange(-1, 1);
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                // .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+                // .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+                // .feedbackSensor(FeedbackSensor.kAnalogSensor)
+                // .positionWrappingEnabled(true)
+                .pid(
+                        p,
+                        i,
+                        d);// .outputRange(-1, 1);
 
         // Set MAXMotion parameters
         config.closedLoop.maxMotion
-            //.maxVelocity(6784)
-            .maxVelocity(100)
-            .maxAcceleration(50)
-            //.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
-            .allowedClosedLoopError(.05);
+                // .maxVelocity(6784)
+                .maxVelocity(100)
+                .maxAcceleration(50)
+                // .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
+                .allowedClosedLoopError(.05);
 
         config.signals.primaryEncoderPositionPeriodMs(5);
         config.signals.primaryEncoderPositionAlwaysOn(true);
 
         motor.configure(
-		    config, 
-			ResetMode.kResetSafeParameters, 
-			PersistMode.kPersistParameters
-		);
+                config,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
 
         SparkMaxConfig config2 = new SparkMaxConfig();
 
         config2
-            .idleMode(IdleMode.kBrake);
+                .idleMode(IdleMode.kBrake);
         config2.follow(Constants.ElevatorConstants.motor_id);
 
         motor2.configure(
-            config2, 
-            ResetMode.kResetSafeParameters, 
-            PersistMode.kPersistParameters
-        );
+                config2,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters);
 
-        /*profiledPIDController.setPID(p, i, d);
-        profiledPIDController.setTolerance(0.05);*/
+        /*
+         * profiledPIDController.setPID(p, i, d);
+         * profiledPIDController.setTolerance(0.05);
+         */
     }
 
     public double getPosition() {
 
-        if(isSim) {
+        if (isSim) {
             return motorSim.getRelativeEncoderSim().getPosition();
         }
 
         return motor.getEncoder().getPosition();
-        //currentPosition = motor.getEncoder().getPosition();
-        /*currentPosition = motor.getAbsoluteEncoder().getPosition();
-
-        if(currentPosition < .2 && previousValue > .8) {
-            revolutionCount++;
-        } else if(currentPosition > .8 && previousValue < .2) {
-            revolutionCount--;
-        }
-
-        previousValue = currentPosition;
-
-        return revolutionCount + currentPosition;*/
+        // currentPosition = motor.getEncoder().getPosition();
+        /*
+         * currentPosition = motor.getAbsoluteEncoder().getPosition();
+         * 
+         * if(currentPosition < .2 && previousValue > .8) {
+         * revolutionCount++;
+         * } else if(currentPosition > .8 && previousValue < .2) {
+         * revolutionCount--;
+         * }
+         * 
+         * previousValue = currentPosition;
+         * 
+         * return revolutionCount + currentPosition;
+         */
     }
 
     public double getTargetPosition() {
@@ -356,23 +366,23 @@ public class ElevatorSubsystem extends SubsystemBase {
         motor.getEncoder().setPosition(0);
     }
 
- 
-
-    /*public boolean atTargetPosition() {
-        return profiledPIDController.atSetpoint();
-    }*/
+    /*
+     * public boolean atTargetPosition() {
+     * return profiledPIDController.atSetpoint();
+     * }
+     */
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("RobotPreferences");
-        //builder.setActuator(true);
-        //builder.setSafeState(this::disable);
+        // builder.setActuator(true);
+        // builder.setSafeState(this::disable);
         builder.addDoubleProperty("D", this::getD, this::setD);
         builder.addDoubleProperty("I", this::getI, this::setI);
         builder.addDoubleProperty("P", this::getP, this::setP);
         builder.addDoubleProperty("Target", this::getTargetPosition, this::setTargetPosition);
-        builder.addDoubleProperty("Position", this::getPosition,null);
-        builder.addBooleanProperty("At Target Position", this::atTargetPosition,null);
+        builder.addDoubleProperty("Position", this::getPosition, null);
+        builder.addBooleanProperty("At Target Position", this::atTargetPosition, null);
         // builder.addBooleanProperty("Limit Switch On", this::getLimitSwitch, null);
         // builder.addDoubleProperty("Revolutions", this::getRevolutions,null);
     }

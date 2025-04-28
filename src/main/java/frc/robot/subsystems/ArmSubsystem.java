@@ -204,7 +204,7 @@ public class ArmSubsystem extends SubsystemBase {
                 d
 			);
 
-        config.absoluteEncoder.zeroOffset(0.5);
+        config.absoluteEncoder.zeroOffset(0);
 
         // Set MAXMotion parameters
         config.closedLoop.maxMotion

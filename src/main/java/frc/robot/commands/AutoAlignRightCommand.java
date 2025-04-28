@@ -44,7 +44,7 @@ public class AutoAlignRightCommand extends Command{
     public void execute() {
         if(limelight.hasTarget()) {
             aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name);            
-            int error = (int) (20.5 - aprilTagLocation);
+            int error = (int) (6.5 - aprilTagLocation);
             double kP = 0.005;
 
             if(Math.abs(error) <4) {
