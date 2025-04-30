@@ -1,31 +1,27 @@
 package frc.robot.subsystems;
 
-import java.util.EnumSet;
-import java.util.Map;
 
-import com.revrobotics.sim.SparkMaxSim;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import com.revrobotics.AbsoluteEncoder;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -53,6 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private boolean isSim = false;
     private ElevatorState state = ElevatorState.Start;
     private double targetPosition = 0.0;
+// <<<<<<< ElevatorWithNeos
     private SparkMax motor = null;
     private SparkMaxSim motorSim = null;
     private SparkMax motor2 = null;
@@ -71,25 +68,38 @@ public class ElevatorSubsystem extends SubsystemBase {
      * );
      */
     private SparkMaxConfig config = new SparkMaxConfig();
+
     private double p = Constants.ElevatorConstants.P;
     private double i = Constants.ElevatorConstants.I;
     private double d = Constants.ElevatorConstants.D;
+
+    private ProfiledPIDController profiledPIDController = new ProfiledPIDController(
+        p,
+        i, 
+        d, 
+        new TrapezoidProfile.Constraints(2, 2),
+        0.02
+    ); 
+
+    
     // these values were calculate using https://www.reca.lc/linear
-    private ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(1.1, 1.55, 3.07);
 
     private double currentPosition = 0.0;
     private double previousValue = 0.0;
     private int revolutionCount = 0;
+
+    
 
     public ElevatorSubsystem() {
 
         if (Constants.kEnableElevator) {
 
             if (RobotBase.isReal()) {
-                isSim = false;
+                isSim = false; 
             } else {
                 isSim = true;
             }
+// <<<<<<< ElevatorWithNeos
 
             // limitSwitch = new DigitalInput(Constants.ElevatorConstants.limitSwitch_id);
             motor = new SparkMax(Constants.ElevatorConstants.motor_id, MotorType.kBrushless);
@@ -103,6 +113,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             setConfig();
 
             pid = motor.getClosedLoopController();
+
 
             if (Constants.kEnableDebugElevator) {
 
@@ -127,6 +138,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             return;
         }
 
+// <<<<<<< ElevatorWithNeos
         // Are we sending the same state again? If so act like a toggle and stop
         // if (this.state == state) {
         // targetPosition = Constants.SliderConstants.Stopped;
@@ -192,6 +204,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
 
         if (Constants.kEnableElevator) {
+// <<<<<<< ElevatorWithNeos
             pid.setReference(targetPosition, ControlType.kPosition);
             if (!limitSwitch.get()) {
                 resetEncoder();
@@ -231,10 +244,12 @@ public class ElevatorSubsystem extends SubsystemBase {
                         RoboRioSim.getVInVoltage(), // Simulated battery voltage, in Volts
                         0.02);
             }
+
         }
     }
 
     private void setConfig() {
+// <<<<<<< ElevatorWithNeos
 
         // resetEncoder();
 
@@ -294,8 +309,7 @@ public class ElevatorSubsystem extends SubsystemBase {
          */
     }
 
-    public double getPosition() {
-
+// <<<<<<< ElevatorWithNeos
         if (isSim) {
             return motorSim.getRelativeEncoderSim().getPosition();
         }
@@ -315,6 +329,7 @@ public class ElevatorSubsystem extends SubsystemBase {
          * 
          * return revolutionCount + currentPosition;
          */
+
     }
 
     public double getTargetPosition() {
@@ -324,11 +339,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public void setTargetPosition(double targetPosition) {
         this.targetPosition = targetPosition;
+        
     }
-
+    public void droptozero() {
+        motor.setVoltage(0);
+        motor2.setVoltage(0);
+    }
     public boolean atTargetPosition() {
         // return true if we are just about at the target position
+// <<<<<<< ElevatorWithNeos
         return Math.abs(targetPosition - currentPosition) < 0.1;
+
     }
 
     public double getP() {
@@ -363,6 +384,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
+// <<<<<<< ElevatorWithNeos
         motor.getEncoder().setPosition(0);
     }
 
@@ -371,6 +393,7 @@ public class ElevatorSubsystem extends SubsystemBase {
      * return profiledPIDController.atSetpoint();
      * }
      */
+
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -381,9 +404,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         builder.addDoubleProperty("I", this::getI, this::setI);
         builder.addDoubleProperty("P", this::getP, this::setP);
         builder.addDoubleProperty("Target", this::getTargetPosition, this::setTargetPosition);
+// <<<<<<< ElevatorWithNeos
         builder.addDoubleProperty("Position", this::getPosition, null);
         builder.addBooleanProperty("At Target Position", this::atTargetPosition, null);
         // builder.addBooleanProperty("Limit Switch On", this::getLimitSwitch, null);
         // builder.addDoubleProperty("Revolutions", this::getRevolutions,null);
+
     }
 }

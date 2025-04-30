@@ -7,6 +7,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.mechanisms.LED.LEDStatus;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.ArmSubsystem;
@@ -46,11 +47,13 @@ public class AutoAlignLeftCommand extends Command {
     @Override
     public void execute() {
         if(limelight.hasTarget()) {
+
             aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);            
             int error = (int) (9.52 - aprilTagLocation);
             double kP = 0.005;
 
-            if(Math.abs(error) <4) {
+
+            if(Math.abs(error) <0.015) {
                 // We are in the zone
                 driveSubsystem.driveRobotRelative(0.0, 0.0, 0.0);
 
@@ -63,14 +66,14 @@ public class AutoAlignLeftCommand extends Command {
                 ) {
                     // We are in a CoralL1 or CoralL2 position, eject out the front
                     endEffectorSubsystem.setDesiredState(EndEffectorState.EjectCoralFront);
-                    //finished = true;
+                    finished = true;
                 } else if(
                     armSubsystem.getDesiredState() == ArmState.CoralL3
                     || armSubsystem.getDesiredState() == ArmState.CoralL4
                 ) {
                     // We are in a CoralL3 or CoralL4 position, eject out the back
                     endEffectorSubsystem.setDesiredState(EndEffectorState.EjectCoralBack);
-                    //finished = true;
+                    finished = true;
                 }
             } else {
                 driveSubsystem.driveRobotRelative(0.0, -error*kP, 0.0);

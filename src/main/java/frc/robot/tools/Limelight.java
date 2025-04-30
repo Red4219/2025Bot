@@ -17,11 +17,14 @@ public class Limelight {
 	//private boolean rejectUpdate = false;
 	private LimelightHelpers.PoseEstimate mt2;
 	private Pose2d robotPose2d = null;
+
 	private double[] poseArray = new double[3];
 	private String name = "";
 
+
     public Limelight(String name) {
 		LimelightHelpers.setCameraPose_RobotSpace(
+
 			name, 
 			0, 
 			0, 
@@ -29,6 +32,7 @@ public class Limelight {
 			0, 
 			0, 
 			180
+
 		);
 		this.name = name;
 	}
@@ -44,20 +48,22 @@ public class Limelight {
 									0,
 									0);
 
+
 		mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
 
-							if (mt2 != null) {
+
+							/*if (mt2 != null) {
 								poseArray[0] = mt2.pose.getX();
 								poseArray[1] = mt2.pose.getY();
 								poseArray[2] = mt2.pose.getRotation().getDegrees();
-							}
+							}*/
 
 		return mt2;
 	}
 
-	public double[] getPoseArray() {
+	/*public double[] getPoseArray() {
 		return poseArray;
-	}
+	}*/
 
 	public boolean hasTarget() {
 		return LimelightHelpers.getTV(Constants.LimelightConstants.name1);

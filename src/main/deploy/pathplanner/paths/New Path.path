@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.259318181818182,
+        "x": 5.793494318181818,
         "y": 4.139673295454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.90237572849484,
+        "x": 6.7934943181818195,
         "y": 4.139673295454545
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Auto 1 Path 1"
     },
     {
       "anchor": {
-        "x": 5.793494318181818,
-        "y": 4.139673295454545
+        "x": 7.22475,
+        "y": 3.831
       },
       "prevControl": {
-        "x": 6.202815675504125,
-        "y": 4.139673295454545
+        "x": 6.22475,
+        "y": 3.831
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Auto 1 Path 1"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,20 +33,20 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Coral1Command",
-      "waypointRelativePos": 0.1,
+      "name": "CoralHumanCommand",
+      "waypointRelativePos": 0.28097868981846047,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "Coral4Command"
+          "name": "CoralHumanCommand"
         }
       }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 1.0,
-    "maxAcceleration": 0.25,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -57,7 +57,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Auto 1 Paths",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
