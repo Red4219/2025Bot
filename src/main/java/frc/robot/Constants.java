@@ -246,6 +246,7 @@ public final class Constants {
 		public static double P = 0.1;
 		public static double I = 0.0;
 		public static double D = 0.0;
+		public static int servo_id = 1;
 
 		public static int servo_id = 1;
 		public static double servoClosed = 0.0;
@@ -257,7 +258,7 @@ public final class Constants {
 		// how high the arm goes to clear a stuck coral on the battery
 		public static double ClearCoral = .103; 
 		//public static double CoralL4 = -0.9;
-		public static double CoralL4 = 0.5258; // using bore encoder
+		public static double CoralL4 = 0.526; // using bore encoder
 		//public static double CoralL3 = -2.738;
 		public static double CoralL3 = 0.55; // using bore encoder
 		//public static double CoralL2 = -0.9;
