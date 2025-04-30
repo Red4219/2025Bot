@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -31,8 +33,9 @@ public class Coral2Command extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-      elevatorSubsystem.setDesiredState(ElevatorState.CoralL2);
       armSubsystem.setDesiredState(ArmState.CoralL2);
+      new RunCommand(() -> new WaitCommand(2));
+      elevatorSubsystem.setDesiredState(ElevatorState.CoralL2);
       endEffectorSubsystem.setDesiredState(EndEffectorState.Stopped);
 
       System.out.println("Coral1Command::execute() called");

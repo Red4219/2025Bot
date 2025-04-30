@@ -12,12 +12,15 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 // This is needed for AdvantageScope
 public class Robot extends LoggedRobot {
 //public class Robot extends TimedRobot {
 	private Command autonomousCommand;
-
+	private ArmSubsystem armSubsystem = RobotContainer.armSubsystem;
+	private ElevatorSubsystem elevatorSystem = RobotContainer.elevatorSubsystem;
 	private RobotContainer robotContainer;
 	//private REVPhysicsSim simulator;
 
@@ -58,6 +61,11 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void disabledInit() {
+		armSubsystem = RobotContainer.armSubsystem;
+		elevatorSystem = RobotContainer.elevatorSubsystem;
+		armSubsystem.setDesiredState(ArmSubsystem.ArmState.Start);
+		elevatorSystem.setDesiredState(ElevatorSubsystem.ElevatorState.Start);
+		
 		//robotContainer.setupAuto(true);
 	}
 
@@ -87,6 +95,7 @@ public class Robot extends LoggedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
+
 	}
 
 	@Override

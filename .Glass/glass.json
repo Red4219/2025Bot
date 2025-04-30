@@ -1,0 +1,25 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "limelight-left": {
+        "open": true
+      }
+    },
+    "types": {
+      "/AdvantageKit/RealOutputs/Alerts": "Alerts",
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Autonomous/Auto": "String Chooser",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Auto": "String Chooser",
+      "/SmartDashboard/field": "Field2d"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "10.42.19.2",
+    "visible": false
+  }
+}

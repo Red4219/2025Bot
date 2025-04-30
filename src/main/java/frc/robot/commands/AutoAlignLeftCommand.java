@@ -30,7 +30,7 @@ public class AutoAlignLeftCommand extends Command {
     public AutoAlignLeftCommand() {
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
-        this.limelight = RobotContainer.limelight;
+        this.limelight = RobotContainer.limelightL;
         this.armSubsystem = RobotContainer.armSubsystem;
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);
@@ -47,9 +47,11 @@ public class AutoAlignLeftCommand extends Command {
     @Override
     public void execute() {
         if(limelight.hasTarget()) {
-            double[] postions = LimelightHelpers.getBotPose_TargetSpace(LimelightConstants.name);           
-            double error = -0.16 - postions[0];
-            double kP = 0.7;
+
+            aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);            
+            int error = (int) (9.52 - aprilTagLocation);
+            double kP = 0.005;
+
 
             if(Math.abs(error) <0.015) {
                 // We are in the zone
