@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Constants;
 
 public class ClimbSubsystem extends SubsystemBase {
@@ -36,10 +37,12 @@ public class ClimbSubsystem extends SubsystemBase {
 
   public ClimberState state = ClimberState.STOPPED;
 
+  private double targetAngle; 
   private double p = Constants.ClimbConstants.P;
   private double i = Constants.ClimbConstants.I;
   private double d = Constants.ClimbConstants.D;
 
+  private Servo servo = new Servo(Constants.ClimbConstants.servo_id);
   private SparkMax motor = new SparkMax(Constants.ClimbConstants.motor_id, MotorType.kBrushless);
   private SparkMaxConfig config = new SparkMaxConfig();
   private SparkClosedLoopController pid = null;
@@ -179,6 +182,7 @@ public class ClimbSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     motor.set(targetVelocity);
+    // servo.setAngle(targetAngle);
   }
 
 

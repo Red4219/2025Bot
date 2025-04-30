@@ -157,7 +157,7 @@ public class RobotContainer {
 				));
 				
 				// Intake coral from human element
-				operatorController.button(8).whileTrue(new SequentialCommandGroup(
+				operatorController.button(8).onTrue(new SequentialCommandGroup(
 		
 					new ElevatorStartCommand(),
 					new ArmStartCommand(),
