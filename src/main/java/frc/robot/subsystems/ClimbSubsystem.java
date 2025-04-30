@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Constants;
+import frc.robot.Constants.ClimbConstants;
 
 public class ClimbSubsystem extends SubsystemBase {
   
@@ -37,7 +38,7 @@ public class ClimbSubsystem extends SubsystemBase {
 
   public ClimberState state = ClimberState.STOPPED;
 
-  private double targetAngle; 
+  private double targetAngle = ClimbConstants.servoClosed; 
   private double p = Constants.ClimbConstants.P;
   private double i = Constants.ClimbConstants.I;
   private double d = Constants.ClimbConstants.D;
@@ -128,12 +129,15 @@ public class ClimbSubsystem extends SubsystemBase {
     switch (this.state) {
       case STOPPED:
         targetVelocity = 0.0;
+        targetAngle = ClimbConstants.servoClosed;
         break;
       case EXTEND:
         targetVelocity = climberExtendSpeed;
+        targetAngle = ClimbConstants.servoOpen;
         break;
       case RETRACT:
         targetVelocity = -climberRetractSpeed;
+        targetAngle = ClimbConstants.servoOpen;
         break;
     }
   }
@@ -182,7 +186,7 @@ public class ClimbSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     motor.set(targetVelocity);
-    // servo.setAngle(targetAngle);
+    servo.setAngle(targetAngle);
   }
 
 
