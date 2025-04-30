@@ -246,7 +246,10 @@ public final class Constants {
 		public static double P = 0.1;
 		public static double I = 0.0;
 		public static double D = 0.0;
+
 		public static int servo_id = 1;
+		public static double servoClosed = 0.0;
+		public static double servoOpen = 0.0;
 
 		public static int servo_id = 1;
 		public static double servoClosed = 0.0;
