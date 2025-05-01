@@ -11,27 +11,21 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Auto 1 Path 2"
+            "name": "AutoAlignRightCommand"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeCoralWait"
+            "name": "EjectCoral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Auto 1 Path 3"
+            "pathName": "New Path"
           }
         }
       ]

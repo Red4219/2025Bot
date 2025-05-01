@@ -37,7 +37,6 @@ public final class Constants {
 	// Limelight
 	public static boolean kEnableLimelight = true;
 	public static boolean kDebugLimelight = true;
-	
 	// Arm
 	public static boolean kEnableArm = true;
 	public static boolean kEnableDebugArm = true;
@@ -183,8 +182,10 @@ public final class Constants {
 	}
 
 	public static class LimelightConstants {
+
 		public static String name1 = "limelight-left";
 		public static String name2 = "limelight-right";
+
 	}
 
 	public static class PhotonVisionConstants {
@@ -194,9 +195,9 @@ public final class Constants {
 
 		public static double camDiagFOV = 170.0;
 		public static double camPitch = 0.0;
-		public static double camHeightOffGround = Units.inchesToMeters(24.0);
+		public static double camHeightOffGround = Units.inchesToMeters(6.0);
 		// the side to side position of the camera relative to the robot center
-		public static double camX = Units.inchesToMeters(-15.0);
+		public static double camX = Units.inchesToMeters(-12.0);
 		// the front to back position of the camera relative to the robot center
 		public static double camY = Units.inchesToMeters(0.0);
 
@@ -257,15 +258,19 @@ public final class Constants {
 		// how high the arm goes to clear a stuck coral on the battery
 		public static double ClearCoral = .103; 
 		//public static double CoralL4 = -0.9;
+
 		public static double CoralL4 = 0.526; // using bore encoder
 		//public static double CoralL3 = -2.738;
 		public static double CoralL3 = 0.55; // using bore encoder
 		//public static double CoralL2 = -0.9;
 		public static double CoralL2 = 0.383; // using bore encoder
+
 		//public static double CoralL1 = -10.0;
 		public static double CoralL1 = 0.300; // using bore encoder
 		//public static double CoralHuman = -0.462;
+
 		public static double CoralHuman = 0.094; // using bore encoder
+
 		//public static double AlgaeL1 = -0.9;
 		public static double AlgaeL1 = 0.103; // using bore encoder
 		//public static double AlgaeL2 = -0.9;
@@ -301,15 +306,19 @@ public final class Constants {
 		public static double IntakeHoldAlgaeMotor1 = -0.1;
 		// public static double IntakeHoldAlgaeMotor2 = -0.1;
 		public static double IntakeAlgaeFloorMotor1 = -0.15;
+
 		// public static double IntakeAlgaeFloorMotor2 = -0.2;
 		public static double IntakeCoralHumanElementMotor1 = .25;
 		// public static double IntakeCoralHumanElementMotor2 = -0.25;
+
 		public static double EjectAlgaeFloorMotor1 = 0.2;
 		// public static double EjectAlgaeFloorMotor2 = 0.2;
 		public static double EjectCoralMotor1 = 0.5;
+
 		// public static double EjectCoralMotor2 = 0.0;
 		public static double EjectCoralMotor1Slow = 0.5;
 		// public static double EjectCoralMotor2Slow = 0.0;
+
 		
 		//public static double P = 1.5;
 		public static double P = 1.0;
@@ -326,13 +335,16 @@ public final class Constants {
 	}
 
 	public static class ElevatorConstants {
-		public static int motor_id = 33;
-		public static int motor2_id = 32;
+		public static int motor_id = 10;
+		public static int motor2_id = 11;
 		//public static double P = 0.1; // bore encoder testing
+
 		public static double P = 0.055;
+
 		//public static double P = 5;
 		public static double I = 0.00002;
 		//public static double D = 0.02;
+
 		public static double D = 0.002;
 
 		public static int limitSwitch_id = 1;
@@ -347,6 +359,7 @@ public final class Constants {
 		public static double CoralL3 = 0.000;
 		public static double CoralL2 = 11.167;
 		public static double CoralL1 = 6.5;
+
 		public static double AlgaeHuman = 1.0;
 		public static double AlgaeL3 = .595;
 		public static double AlgaeL2 = .595;
@@ -356,4 +369,5 @@ public final class Constants {
 		public static double ClimberUp = 12.0;
 		public static double ClimberDown = 9.0;
 	}
+	
 }
