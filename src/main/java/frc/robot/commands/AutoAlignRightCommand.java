@@ -42,14 +42,27 @@ public class AutoAlignRightCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(limelight.hasTarget()) {
-            aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);            
-            int error = (int) (3.29 - aprilTagLocation);
-            double kP = 0.005;
 
-            if(Math.abs(error) <4) {
+        if(limelight.hasTarget()) {
+            aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);
+
+            //System.out.println("aprilTagLocation: " + aprilTagLocation + " -Constants.DriveConstants.kAutoAlignOffset: " + (-Constants.DriveConstants.kAutoAlignOffset) + "Constants.DriveConstants.kAutoAlignTolerance")
+
+            if(
+                (aprilTagLocation ) > (Constants.DriveConstants.kAutoAlignRightOffset - Constants.DriveConstants.kAutoAlignTolerance)
+                && (aprilTagLocation) < (Constants.DriveConstants.kAutoAlignRightOffset + Constants.DriveConstants.kAutoAlignTolerance)
+            ) {
                 // We are in the zone
                 driveSubsystem.driveRobotRelative(0.0, 0.0, 0.0);
+
+                /*SequentialCommandGroup scg = new SequentialCommandGroup(
+                    new EjectCoralCommand(),
+                    new DriveBackwardsCommand(),
+                    new ArmStartCommand()
+
+                );
+
+                scg.execute();*/
 
                 // Set the LED to show that it has the target
                 RobotContainer.led1.setStatus(LEDStatus.targetAquired);
@@ -69,8 +82,17 @@ public class AutoAlignRightCommand extends Command{
                     endEffectorSubsystem.setDesiredState(EndEffectorState.EjectCoralBack);
                     //finished = true;
                 }
-            } else {
-                driveSubsystem.driveRobotRelative(0.0, -error*kP, 0.0);
+            } else if(
+                (aprilTagLocation) < (Constants.DriveConstants.kAutoAlignRightOffset + Constants.DriveConstants.kAutoAlignTolerance)
+            ) {
+                driveSubsystem.driveRobotRelative(0.0, Constants.DriveConstants.kAutoAlignSpeed, 0.0);
+
+                // Set the LED to show that it has the target
+                RobotContainer.led1.setStatus(LEDStatus.targetSearching);
+            } else if (
+                (aprilTagLocation) > (Constants.DriveConstants.kAutoAlignRightOffset - Constants.DriveConstants.kAutoAlignTolerance)
+            ) {
+                driveSubsystem.driveRobotRelative(0.0, -Constants.DriveConstants.kAutoAlignSpeed, 0.0);
 
                 // Set the LED to show that it has the target
                 RobotContainer.led1.setStatus(LEDStatus.targetSearching);

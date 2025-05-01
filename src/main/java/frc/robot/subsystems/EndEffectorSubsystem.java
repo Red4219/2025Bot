@@ -194,7 +194,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
                 if(RobotContainer.armSubsystem.getDesiredState() == ArmState.CoralL1) {
                     // If we are trying to eject out for a Coral L1, slow it down
-                    targetVelocity1 = Constants.EndEffectorConstants.EjectCoralMotor1Slow;
+                    targetVelocity1 = Constants.EndEffectorConstants.EjectCoralMotor1;
                     // targetVelocity2 = Constants.EndEffectorConstants.EjectCoralMotor2;
                 } else {
                     // we are not trying to eject to Coral L1 so go the requested speed
@@ -313,11 +313,11 @@ public class EndEffectorSubsystem extends SubsystemBase {
                     break;
                 case EjectCoralFrontNoCheck:
                     // motor2.set(targetVelocity1);
-                    motor.set(targetVelocity2);
+                    motor.set(targetVelocity1);
                     break;
                 case EjectCoralBackNoCheck:
                     // motor2.set(targetVelocity1);
-                    motor.set(targetVelocity2);
+                    motor.set(targetVelocity1);
                     break;
                 case Stopped:
                     // stop the motors
