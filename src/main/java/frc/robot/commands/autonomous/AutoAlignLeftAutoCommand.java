@@ -1,9 +1,12 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
+import frc.robot.commands.AutoAlignLeftCommand;
 import frc.robot.mechanisms.LED.LEDStatus;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -13,15 +16,14 @@ import frc.robot.subsystems.EndEffectorSubsystem.EndEffectorState;
 import frc.robot.tools.Limelight;
 
 public class AutoAlignLeftAutoCommand extends Command {
-    private DriveSubsystem driveSubsystem;
-    private EndEffectorSubsystem endEffectorSubsystem;
-    private ArmSubsystem armSubsystem;
-    private Limelight limelight;
+
     private boolean finished = false;
-    private double aprilTagLocation = 0.0;
-    private double aprilTagLocationY = 0.0;
+    private AutoAlignLeftCommand autoAlignLeftCommand;
+    private SequentialCommandGroup scg;
+
 
     public AutoAlignLeftAutoCommand() {
+
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
         this.limelight = RobotContainer.limelightL;
@@ -29,18 +31,24 @@ public class AutoAlignLeftAutoCommand extends Command {
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);
         addRequirements(armSubsystem);
+
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        System.out.println("AutoAlignLeftAutoCommand::initialize() called");
-        finished = true;
+        finished = false;
+        autoAlignLeftCommand = new AutoAlignLeftCommand();
+        scg = new SequentialCommandGroup(autoAlignLeftCommand);
+        scg.schedule();
+        
+        //CommandScheduler.getInstance().schedule(scg);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+// <<<<<<< ElevatorWithNeos
 
         if(limelight.hasTarget()) {
             aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);            
@@ -128,6 +136,7 @@ public class AutoAlignLeftAutoCommand extends Command {
             // Set the LED to show that it has the target
             RobotContainer.led1.setStatus(LEDStatus.targetSearching);
         }
+
     }
 
     // Called once the command ends or is interrupted.
@@ -137,7 +146,6 @@ public class AutoAlignLeftAutoCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        System.out.println("AutoAlignLeftAutoCommand::isFinished() called");
-        return finished;
+        return scg.isFinished();
     }
 }

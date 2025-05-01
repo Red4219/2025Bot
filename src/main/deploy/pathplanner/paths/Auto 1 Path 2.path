@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.869802517361111,
-        "y": 3.831
+        "x": 5.793494318181818,
+        "y": 4.139673295454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.582227189145782,
-        "y": 1.2275281278379344
+        "x": 6.505918989966489,
+        "y": 1.5362014232924799
       },
       "isLocked": false,
       "linkedName": "Auto 1 Path 1"
@@ -20,8 +20,8 @@
         "y": 1.255
       },
       "prevControl": {
-        "x": 2.636162971047795,
-        "y": 1.8328000775505484
+        "x": 2.6325,
+        "y": 1.8312500000000003
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "CoralHumanCommand",
+      "waypointRelativePos": 0.2974820143884854,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 50.16731961059488
+    "rotation": 55.0
   },
   "reversed": false,
   "folder": "Auto 1 Paths",

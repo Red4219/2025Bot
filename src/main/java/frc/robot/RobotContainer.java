@@ -80,6 +80,8 @@ public class RobotContainer {
 	private final CommandXboxController driverController = new CommandXboxController(0);
 	private final CommandXboxController operatorController = new CommandXboxController(1);
 
+
+
 		private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
 		public SendableChooser<Command> getAutoChooser() {
@@ -97,6 +99,7 @@ public class RobotContainer {
 			// Configure the trigger bindings
 			configureBindings();
 			
+
 			// Register commands to be used in Auto
 			NamedCommands.registerCommand("IntakeCoralWait", new IntakeCoralWaitCommand());
 			NamedCommands.registerCommand("IntakeWait", new IntakeCoralWaitCommand());

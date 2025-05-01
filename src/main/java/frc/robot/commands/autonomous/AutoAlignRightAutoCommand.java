@@ -1,9 +1,12 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
+import frc.robot.commands.AutoAlignLeftCommand;
+import frc.robot.commands.AutoAlignRightCommand;
 import frc.robot.mechanisms.LED.LEDStatus;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -14,14 +17,12 @@ import frc.robot.tools.Limelight;
 
 public class AutoAlignRightAutoCommand extends Command  {
 
-    private DriveSubsystem driveSubsystem;
-    private EndEffectorSubsystem endEffectorSubsystem;
-    private ArmSubsystem armSubsystem;
-    Limelight limelight;
     private boolean finished = false;
-    double aprilTagLocation = 0.0;
+    private AutoAlignRightCommand autoAlignRightCommand;
+    private SequentialCommandGroup scg;
     
     public AutoAlignRightAutoCommand() {
+// <<<<<<< ElevatorWithNeos
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
         this.limelight = RobotContainer.limelightL;
@@ -29,19 +30,25 @@ public class AutoAlignRightAutoCommand extends Command  {
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);
         addRequirements(armSubsystem);
+
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        System.out.println("AutoAlignRightAutoCommand::initialize() called");
-        finished = true;
+        finished = false;
+        autoAlignRightCommand = new AutoAlignRightCommand();
+        scg = new SequentialCommandGroup(autoAlignRightCommand);
+        scg.schedule();
+        
+        //CommandScheduler.getInstance().schedule(scg);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
 
+// <<<<<<< ElevatorWithNeos
         if(limelight.hasTarget()) {
             aprilTagLocation = LimelightHelpers.getTX(Constants.LimelightConstants.name1);
 
@@ -103,6 +110,7 @@ public class AutoAlignRightAutoCommand extends Command  {
             // Set the LED to show that it has the target
             RobotContainer.led1.setStatus(LEDStatus.targetSearching);
         }
+
     }
 
     // Called once the command ends or is interrupted.
@@ -112,7 +120,6 @@ public class AutoAlignRightAutoCommand extends Command  {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        System.out.println("AutoAlignRightAutoCommand::isFinished() called");
-        return finished;
+        return scg.isFinished();
     }
 }

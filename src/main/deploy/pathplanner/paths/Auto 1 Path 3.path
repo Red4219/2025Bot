@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Coral1Command",
-      "waypointRelativePos": 0.20486697635135126,
+      "name": "Coral2Command",
+      "waypointRelativePos": 0.255755395683454,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -42,11 +42,17 @@
           "name": "Coral1Command"
         }
       }
+    },
+    {
+      "name": "AutoAlignRightCommand",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -60,7 +66,7 @@
   "folder": "Auto 1 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 50.16731961059488
+    "rotation": 55.0
   },
   "useDefaultConstraints": false
 }
