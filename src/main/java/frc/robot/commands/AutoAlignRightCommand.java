@@ -30,7 +30,7 @@ public class AutoAlignRightCommand extends Command {
     public AutoAlignRightCommand() {
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
-        this.limelight = RobotContainer.limelightL;
+        this.limelight = RobotContainer.limelight;
         this.armSubsystem = RobotContainer.armSubsystem;
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);

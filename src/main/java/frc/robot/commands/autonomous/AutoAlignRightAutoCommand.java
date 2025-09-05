@@ -20,12 +20,17 @@ public class AutoAlignRightAutoCommand extends Command  {
     private boolean finished = false;
     private AutoAlignRightCommand autoAlignRightCommand;
     private SequentialCommandGroup scg;
+    private DriveSubsystem driveSubsystem;
+    private Limelight limelight;
+    private EndEffectorSubsystem endEffectorSubsystem;
+    private ArmSubsystem armSubsystem;
+    private double aprilTagLocation;
     
     public AutoAlignRightAutoCommand() {
 // <<<<<<< ElevatorWithNeos
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
-        this.limelight = RobotContainer.limelightL;
+        this.limelight = RobotContainer.limelight;
         this.armSubsystem = RobotContainer.armSubsystem;
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);

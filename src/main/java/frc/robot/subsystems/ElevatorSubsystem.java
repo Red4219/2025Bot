@@ -1,10 +1,18 @@
 package frc.robot.subsystems;
 
 
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import com.revrobotics.AbsoluteEncoder;
-
+import com.revrobotics.sim.SparkMaxSim;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -13,6 +21,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.AnalogEncoder;
@@ -21,7 +30,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -310,10 +319,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
 // <<<<<<< ElevatorWithNeos
+    public double getPosition(){
         if (isSim) {
             return motorSim.getRelativeEncoderSim().getPosition();
         }
-
+    
         return motor.getEncoder().getPosition();
         // currentPosition = motor.getEncoder().getPosition();
         /*
@@ -331,6 +341,7 @@ public class ElevatorSubsystem extends SubsystemBase {
          */
 
     }
+
 
     public double getTargetPosition() {
 

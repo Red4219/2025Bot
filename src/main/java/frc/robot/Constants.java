@@ -28,7 +28,7 @@ public final class Constants {
 	// Drive train
 	public static boolean kDebugDriveTrain = true;
 	public static boolean kEnableDriveSubSystemLogger = true;
-	public static boolean enableLogger = false;
+	public static boolean enableLogger = true;
 
 	// Photonvision
 	public static boolean kEnablePhotonVision = false;
@@ -183,8 +183,8 @@ public final class Constants {
 
 	public static class LimelightConstants {
 
-		public static String name1 = "limelight-left";
-		public static String name2 = "limelight-right";
+		public static String name1 = "limelight";
+		
 
 	}
 

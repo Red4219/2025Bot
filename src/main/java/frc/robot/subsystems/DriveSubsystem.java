@@ -142,7 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		if(Constants.kEnableLimelight) {
-			_limeLight = RobotContainer.limelightL;
+			_limeLight = RobotContainer.limelight;
 		}
 
 		if(RobotBase.isReal()) {
@@ -545,34 +545,37 @@ public class DriveSubsystem extends SubsystemBase {
 			}
 		}
 
-		// if (Constants.kEnableLimelight) {
+		if (Constants.kEnableLimelight) {
+			System.out.println(_limeLight == null);
+			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition());
+			// System.out.println(limelightMeasurement.tagCount);
+			System.out.println((limelightMeasurement == null));
+			// Did we get a measurement?
+			if(limelightMeasurement != null && limelightMeasurement.tagCount >= 1) {
+				System.out.println("Limelight not null and tag is visible");
+				limeLightCanSeeTag = true;
 
-		// 	limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition());
+     			poseEstimator.addVisionMeasurement(
+         			limelightMeasurement.pose,
+         			limelightMeasurement.timestampSeconds
+				);
 
-		// 	// Did we get a measurement?
-		// 	if(limelightMeasurement != null && limelightMeasurement.tagCount >= 1) {
-
-		// 		limeLightCanSeeTag = true;
-
-     	// 		poseEstimator.addVisionMeasurement(
-        //  			limelightMeasurement.pose,
-        //  			limelightMeasurement.timestampSeconds
-		// 		);
-
-		// 		if(Constants.kEnableDriveSubSystemLogger) {
-		// 			Logger.recordOutput("Limelight/Pose", limelightMeasurement.pose);
-		// 		}
+				if(Constants.kEnableDriveSubSystemLogger) {
+					Logger.recordOutput("Limelight/Pose", limelightMeasurement.pose);
+					System.out.println("Calling the freaking logger");
+				}
 
 
-		// 		if(!gyro.isMoving()) {
-		// 			// if we are not moving, reset the odometry to the location from the limelight
-		// 			resetOdometry(limelightMeasurement.pose);
-		// 		}
-		// 	} else {
-		// 		//RobotContainer.led1.setStatus(LEDStatus.targetSearching);
-		// 		limeLightCanSeeTag = false;
-		// 	}
-		// }
+				if(!gyro.isMoving()) {
+					// if we are not moving, reset the odometry to the location from the limelight
+					resetOdometry(limelightMeasurement.pose);
+				}
+			} else {
+				//RobotContainer.led1.setStatus(LEDStatus.targetSearching);
+				System.out.println("LL Cannot see tag");
+				limeLightCanSeeTag = false;
+			}
+		}
 
 		if(isSim) {
 

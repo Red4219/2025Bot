@@ -20,13 +20,18 @@ public class AutoAlignLeftAutoCommand extends Command {
     private boolean finished = false;
     private AutoAlignLeftCommand autoAlignLeftCommand;
     private SequentialCommandGroup scg;
+    private DriveSubsystem driveSubsystem;
+    private Limelight limelight;
+    private EndEffectorSubsystem endEffectorSubsystem;
+    private ArmSubsystem armSubsystem;
+    private double aprilTagLocation;
 
 
     public AutoAlignLeftAutoCommand() {
 
         this.driveSubsystem = RobotContainer.driveSubsystem;
         this.endEffectorSubsystem = RobotContainer.endEffectorSubsystem;
-        this.limelight = RobotContainer.limelightL;
+        this.limelight = RobotContainer.limelight;
         this.armSubsystem = RobotContainer.armSubsystem;
         addRequirements(driveSubsystem);
         addRequirements(endEffectorSubsystem);
