@@ -546,13 +546,11 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		if (Constants.kEnableLimelight) {
-			System.out.println(_limeLight == null);
-			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition());
+			Rotation2d offset = new Rotation2d(180);
+			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition().rotateBy(offset));
 			// System.out.println(limelightMeasurement.tagCount);
-			System.out.println((limelightMeasurement == null));
 			// Did we get a measurement?
 			if(limelightMeasurement != null && limelightMeasurement.tagCount >= 1) {
-				System.out.println("Limelight not null and tag is visible");
 				limeLightCanSeeTag = true;
 
      			poseEstimator.addVisionMeasurement(
@@ -562,17 +560,15 @@ public class DriveSubsystem extends SubsystemBase {
 
 				if(Constants.kEnableDriveSubSystemLogger) {
 					Logger.recordOutput("Limelight/Pose", limelightMeasurement.pose);
-					System.out.println("Calling the freaking logger");
 				}
 
 
 				if(!gyro.isMoving()) {
 					// if we are not moving, reset the odometry to the location from the limelight
-					resetOdometry(limelightMeasurement.pose);
+					resetOdometry(limelightMeasurement.pose.rotateBy(offset));
 				}
 			} else {
 				//RobotContainer.led1.setStatus(LEDStatus.targetSearching);
-				System.out.println("LL Cannot see tag");
 				limeLightCanSeeTag = false;
 			}
 		}

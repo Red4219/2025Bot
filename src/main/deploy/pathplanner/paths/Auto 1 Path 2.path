@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.793494318181818,
-        "y": 4.139673295454545
+        "x": 5.9630113636363635,
+        "y": 0.7094460227272736
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.505918989966489,
-        "y": 1.5362014232924799
+        "x": 6.6754360354210345,
+        "y": -1.894025849434792
       },
       "isLocked": false,
       "linkedName": "Auto 1 Path 1"
@@ -55,7 +55,7 @@
   "folder": "Auto 1 Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": false
 }
