@@ -108,6 +108,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private double turnI = ModuleConstants.kModuleTurningGains.kI;
 	private double turnD = ModuleConstants.kModuleTurningGains.kD;
 
+	private Rotation2d rotationOffset180 = new Rotation2d(180);
+
 	/*private double autoDriveP = AutoConstants.PathPLannerConstants.kPPDriveConstants.kP;
 	private double autoDriveI = AutoConstants.PathPLannerConstants.kPPDriveConstants.kI;
 	private double autoDriveD = AutoConstants.PathPLannerConstants.kPPDriveConstants.kD;*/
@@ -471,7 +473,8 @@ public class DriveSubsystem extends SubsystemBase {
 		} 
 		
 		//return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d().unaryMinus());
-		return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+		//return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
+		return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, poseEstimator.getEstimatedPosition().getRotation());
 	}
 
 	// This is for auto
@@ -546,8 +549,8 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		if (Constants.kEnableLimelight) {
-			Rotation2d offset = new Rotation2d(180);
-			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition().rotateBy(offset));
+			
+			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition().rotateBy(rotationOffset180));
 			// System.out.println(limelightMeasurement.tagCount);
 			// Did we get a measurement?
 			if(limelightMeasurement != null && limelightMeasurement.tagCount >= 1) {
@@ -565,7 +568,10 @@ public class DriveSubsystem extends SubsystemBase {
 
 				if(!gyro.isMoving()) {
 					// if we are not moving, reset the odometry to the location from the limelight
-					resetOdometry(limelightMeasurement.pose.rotateBy(offset));
+					//resetOdometry(limelightMeasurement.pose.rotateBy(rotationOffset180));
+					
+					// this should already be rotated above
+					resetOdometry(limelightMeasurement.pose);
 				}
 			} else {
 				//RobotContainer.led1.setStatus(LEDStatus.targetSearching);
