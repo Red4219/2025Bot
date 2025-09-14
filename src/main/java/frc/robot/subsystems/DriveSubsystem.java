@@ -6,6 +6,7 @@ import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -772,7 +773,7 @@ public class DriveSubsystem extends SubsystemBase {
 					return false;*/
 					// this is for blue
 					//System.out.println("setting to blue!!!!!");
-					return false;
+					return true;
 
 					// this is for red
 					// return true;
