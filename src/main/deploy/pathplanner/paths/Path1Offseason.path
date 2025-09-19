@@ -8,20 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.9630113636363635,
-        "y": 0.1709801136363649
+        "x": 5.773551136363636,
+        "y": 2.2251278409090913
       },
       "isLocked": false,
-      "linkedName": "Auto 1 Path 1"
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.341931818181817,
+        "y": 2.1952130681818187
+      },
+      "prevControl": {
+        "x": 5.8632954545454545,
+        "y": 2.1752698863636364
+      },
+      "nextControl": {
+        "x": 6.720654845099617,
+        "y": 2.210993194303394
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
         "x": 5.9630113636363635,
-        "y": 2.1852414772727276
+        "y": 0.7094460227272736
       },
       "prevControl": {
-        "x": 5.9630113636363635,
-        "y": 2.4352414772727276
+        "x": 6.122556818181818,
+        "y": 1.0983380681818187
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.125,
-    "maxAcceleration": 0.125,
+    "maxVelocity": 0.75,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,7 +61,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Offseason",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

@@ -81,22 +81,38 @@ public final class Constants {
 		public static final double ksTurning = .17161; 
 
 		// NEO drive motor CAN ID's
-		public static final int kFrontLeftDriveMotorPort = 2;
-		public static final int kFrontRightDriveMotorPort = 4;
-		public static final int kRearLeftDriveMotorPort = 8;
-		public static final int kRearRightDriveMotorPort = 6;
+		//public static final int kFrontLeftDriveMotorPort = 2;
+		//public static final int kFrontRightDriveMotorPort = 4;
+		//public static final int kRearLeftDriveMotorPort = 8;
+		//public static final int kRearRightDriveMotorPort = 6;
+
+		public static final int kFrontLeftDriveMotorPort = 6;
+		public static final int kFrontRightDriveMotorPort = 8;
+		public static final int kRearLeftDriveMotorPort = 4;
+		public static final int kRearRightDriveMotorPort = 2;
 
 		// NEO turning motor CAN ID's
-		public static final int kFrontLeftTurningMotorPort = 1;
-		public static final int kFrontRightTurningMotorPort = 3;
-		public static final int kRearLeftTurningMotorPort = 7;
-		public static final int kRearRightTurningMotorPort = 5;
+		// public static final int kFrontLeftTurningMotorPort = 1;
+		// public static final int kFrontRightTurningMotorPort = 3;
+		// public static final int kRearLeftTurningMotorPort = 7;
+		// public static final int kRearRightTurningMotorPort = 5;
+
+		public static final int kFrontLeftTurningMotorPort = 5;
+		public static final int kFrontRightTurningMotorPort = 7;
+		public static final int kRearLeftTurningMotorPort = 3;
+		public static final int kRearRightTurningMotorPort = 1;
+
 
 		// CANcoder CAN ID's
-		public static final int kFrontLeftTurningEncoderPort = 9;
-		public static final int kFrontRightTurningEncoderPort = 10;
-		public static final int kRearLeftTurningEncoderPort = 12;
-		public static final int kRearRightTurningEncoderPort = 11;
+		// public static final int kFrontLeftTurningEncoderPort = 9;
+		// public static final int kFrontRightTurningEncoderPort = 10;
+		// public static final int kRearLeftTurningEncoderPort = 12;
+		// public static final int kRearRightTurningEncoderPort = 11;
+
+		public static final int kFrontLeftTurningEncoderPort = 11;
+		public static final int kFrontRightTurningEncoderPort = 12;
+		public static final int kRearLeftTurningEncoderPort = 10;
+		public static final int kRearRightTurningEncoderPort = 9;
 
 		// Offset angle for absolute encoders (find this using CTRE client)
 		public static final double kFrontLeftAngleZero = 0.0;

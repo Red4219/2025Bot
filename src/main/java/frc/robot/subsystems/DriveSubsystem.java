@@ -109,7 +109,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private double turnI = ModuleConstants.kModuleTurningGains.kI;
 	private double turnD = ModuleConstants.kModuleTurningGains.kD;
 
-	private Rotation2d rotationOffset180 = new Rotation2d(180);
+	private Rotation2d rotationOffset180 = new Rotation2d(0);
 
 	/*private double autoDriveP = AutoConstants.PathPLannerConstants.kPPDriveConstants.kP;
 	private double autoDriveI = AutoConstants.PathPLannerConstants.kPPDriveConstants.kI;
@@ -166,7 +166,7 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				false
+				true
 
 			);
 
@@ -179,7 +179,7 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				false
+				true
 			);
 
 		rearLeft = new SwerveModule(
@@ -191,7 +191,7 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				false
+				true
 			);
 
 		rearRight = new SwerveModule(
@@ -203,7 +203,7 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				false
+				true
 			);
 
 		swervePosition = new SwerveModulePosition[] {
@@ -258,18 +258,18 @@ public class DriveSubsystem extends SubsystemBase {
 			gyroTab.addDouble("Pitch", gyro::getPitch);
 			gyroTab.addDouble("Roll", gyro::getRoll);
 
-			// Swerve tab stuff
-			/*ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
-			swerveTab.addDouble("FL Absolute", frontLeft::getAbsoluteHeading);
-			swerveTab.addDouble("FR Absolute", frontRight::getAbsoluteHeading);
-			swerveTab.addDouble("RL Absolute", rearLeft::getAbsoluteHeading);
-			swerveTab.addDouble("RR Absolute", rearRight::getAbsoluteHeading);
-			swerveTab.addDouble("FL Meters", frontLeft::getDistanceMeters);
-			swerveTab.addDouble("FR Meters", frontRight::getDistanceMeters);
-			swerveTab.addDouble("RL Meters", rearLeft::getDistanceMeters);
-			swerveTab.addDouble("RR Meters", rearRight::getDistanceMeters);
-			swerveTab.addBoolean("Auto Aim", this::autoAim);
-			swerveTab.addBoolean("Target Locked", this::getTargetLocked);*/
+			//Swerve tab stuff
+			ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+			// swerveTab.addDouble("FL Absolute", frontLeft::getAbsoluteHeading);
+			// swerveTab.addDouble("FR Absolute", frontRight::getAbsoluteHeading);
+			// swerveTab.addDouble("RL Absolute", rearLeft::getAbsoluteHeading);
+			// swerveTab.addDouble("RR Absolute", rearRight::getAbsoluteHeading);
+			// swerveTab.addDouble("FL Meters", frontLeft::getDistanceMeters);
+			// swerveTab.addDouble("FR Meters", frontRight::getDistanceMeters);
+			// swerveTab.addDouble("RL Meters", rearLeft::getDistanceMeters);
+			// swerveTab.addDouble("RR Meters", rearRight::getDistanceMeters);
+			// swerveTab.addBoolean("Auto Aim", this::autoAim);
+			// swerveTab.addBoolean("Target Locked", this::getTargetLocked);
 
             SmartDashboard.putData(this);
             Shuffleboard.getTab("Swerve")
@@ -481,6 +481,8 @@ public class DriveSubsystem extends SubsystemBase {
 	// This is for auto
 	public DriveFeedforwards setChassisSpeedsRobotRelative(ChassisSpeeds chassisSpeeds, DriveFeedforwards feedForwards ) {
 
+		// chassisSpeeds = chassisSpeeds.times(-1.0);
+		
 		swerveModuleStatesRobotRelative = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
 		// In simulation, the actual navx does not work, so set the value from the chassisSpeeds
@@ -550,8 +552,9 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 		if (Constants.kEnableLimelight) {
-			
-			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition().rotateBy(rotationOffset180));
+			//
+			//limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition().rotateBy(rotationOffset180));
+			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition());
 			// System.out.println(limelightMeasurement.tagCount);
 			// Did we get a measurement?
 			if(limelightMeasurement != null && limelightMeasurement.tagCount >= 1) {
