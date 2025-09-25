@@ -189,8 +189,10 @@ public class RobotContainer {
 				// Auto align for the coral
 				driverController.leftBumper().whileTrue(new AutoAlignLeftCommand());
 				driverController.rightBumper().whileTrue(new AutoAlignRightCommand());
+
+				// Go to position
+				driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
 	
-				//driverController.button(3).whileTrue(new StartCommand());
 				operatorController.button(1).whileTrue(new SequentialCommandGroup(
 					new EndEffectorStopCommand(),
 					

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
@@ -14,12 +15,16 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -54,6 +59,9 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.mechanisms.LED.LEDStatus;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
 
 
 public class DriveSubsystem extends SubsystemBase {
@@ -114,6 +122,24 @@ public class DriveSubsystem extends SubsystemBase {
 	/*private double autoDriveP = AutoConstants.PathPLannerConstants.kPPDriveConstants.kP;
 	private double autoDriveI = AutoConstants.PathPLannerConstants.kPPDriveConstants.kI;
 	private double autoDriveD = AutoConstants.PathPLannerConstants.kPPDriveConstants.kD;*/
+
+	Trajectory trajectory = null;
+	Trajectory.State goal = null;
+
+	// test for auto positioning
+	HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
+		new PIDController(1, 0, 0),
+		new PIDController(1, 0, 0),
+		new ProfiledPIDController(
+			2,
+			0,
+			0,
+			new TrapezoidProfile.Constraints(
+				5.0,
+				5.0
+			)
+		)
+	);
 
 	/**
 	* Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
@@ -548,12 +574,11 @@ public class DriveSubsystem extends SubsystemBase {
 					phoneEstimatedRobotPose.timestampSeconds,
 					visionMeasurementStdDevs
 				);
-				if(!gyro.isMoving()) {
+				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision) {
 					// if we are not moving, reset the odometry to the location from the limelight
 					//resetOdometry(limelightMeasurement.pose.rotateBy(rotationOffset180));
 					
 					// this should already be rotated above
-					// resetOdometry(limelightMeasurement.pose);
 					resetOdometry(phoneEstimatedRobotPose.estimatedPose.toPose2d());
 				}
 			}
@@ -578,7 +603,7 @@ public class DriveSubsystem extends SubsystemBase {
 				}
 
 
-				if(!gyro.isMoving()) {
+				if(!gyro.isMoving() && Constants.kResetOdometryFromLimeLight) {
 					// if we are not moving, reset the odometry to the location from the limelight
 					//resetOdometry(limelightMeasurement.pose.rotateBy(rotationOffset180));
 					
@@ -812,4 +837,78 @@ public class DriveSubsystem extends SubsystemBase {
 		builder.addDoubleProperty("Auto_Drive_D", this::getAutoDriveD, null); */
 		
     }
+
+	public Trajectory.State generateTrajectory(Pose2d targetPose) {
+
+		var sideStart = new Pose2d(
+			odometry.getPoseMeters().getX(), 
+			odometry.getPoseMeters().getY(),
+			odometry.getPoseMeters().getRotation()
+		);
+			
+		var interiorWaypoints = new ArrayList<Translation2d>();
+	
+		TrajectoryConfig config = new TrajectoryConfig(
+			Units.feetToMeters(12),
+			Units.feetToMeters(12)
+		);
+
+		try {
+	
+			trajectory = TrajectoryGenerator.generateTrajectory(
+				sideStart,
+				interiorWaypoints,
+				//crossScale,
+				targetPose,
+				config
+			);
+		} catch (Exception e) {
+			//System.out.println("DriveSubsystem::generateTrajectory() - " + e.getMessage());
+			return null;
+		}
+
+		return trajectory.sample(trajectory.getTotalTimeSeconds());
+	}
+
+	public void goToPose(Constants.PoseDefinitions.kFieldPoses targetPose) {
+
+		Pose2d pose = null;
+
+		if(targetPose == Constants.PoseDefinitions.kFieldPoses.PROCESSOR) {
+			if (DriverStation.getAlliance().get() == Alliance.Blue) {
+				pose = Constants.PoseDefinitions.kProcessorPoseBlue;
+			} else {
+				pose = Constants.PoseDefinitions.kProcessorPoseRed;
+			}
+		} else if(targetPose == Constants.PoseDefinitions.kFieldPoses.REEF) {
+			if (DriverStation.getAlliance().get() == Alliance.Blue) {
+				pose = Constants.PoseDefinitions.kReefPoseBlue;
+			} else {
+				pose = Constants.PoseDefinitions.kReefPoseRed;
+			}
+		}
+
+		goal = generateTrajectory(pose);
+
+		if(goal == null) {
+			return;
+		}
+
+		
+
+		//System.out.println("go to pose called, time is: " + trajectory.getTotalTimeSeconds());
+
+		// Get the adjusted speeds. Here, we want the robot to be facing
+		// 180 degrees (in the field-relative coordinate system).
+		ChassisSpeeds adjustedSpeeds = holonomicDriveController.calculate(
+  			//getPose(),
+			getPoseEstimatorPose2d(),
+			goal,
+			pose.getRotation()
+		);
+
+		SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(adjustedSpeeds);
+
+		setModuleStates(moduleStates);
+	}
 }

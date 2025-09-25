@@ -9,6 +9,12 @@
           "data": {
             "pathName": "Path1Offseason"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Path2Offseason"
+          }
         }
       ]
     }

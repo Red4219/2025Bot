@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.973,
-        "y": 0.672
+        "x": 5.108,
+        "y": 2.671
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.694029514535002,
-        "y": 1.252824825980325
+        "x": 5.221628045029527,
+        "y": 2.3140837844488185
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Path1Offseason"
     },
     {
       "anchor": {
-        "x": 5.108079939714567,
-        "y": 2.671
+        "x": 5.958913785679134,
+        "y": 0.6804489111712609
       },
       "prevControl": {
-        "x": 5.386940975639764,
-        "y": 2.1414555241141735
+        "x": 5.899789231674092,
+        "y": 0.9233568919246831
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Path2Offseason"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -89.4662492455406
   },
   "reversed": false,
   "folder": "Offseason",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": -90.0
+    "velocity": 0,
+    "rotation": -89.03903291275579
   },
   "useDefaultConstraints": false
 }
