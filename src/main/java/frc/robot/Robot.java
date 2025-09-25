@@ -77,6 +77,7 @@ public class Robot extends LoggedRobot {
 	@Override
 	public void autonomousInit() {
 		//robotContainer.setupAuto(false);
+		
 		autonomousCommand = robotContainer.getAutonomousCommand();
 
 		if (autonomousCommand != null) {
