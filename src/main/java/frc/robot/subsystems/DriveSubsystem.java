@@ -548,6 +548,14 @@ public class DriveSubsystem extends SubsystemBase {
 					phoneEstimatedRobotPose.timestampSeconds,
 					visionMeasurementStdDevs
 				);
+				if(!gyro.isMoving()) {
+					// if we are not moving, reset the odometry to the location from the limelight
+					//resetOdometry(limelightMeasurement.pose.rotateBy(rotationOffset180));
+					
+					// this should already be rotated above
+					// resetOdometry(limelightMeasurement.pose);
+					resetOdometry(phoneEstimatedRobotPose.estimatedPose.toPose2d());
+				}
 			}
 		}
 
@@ -581,7 +589,9 @@ public class DriveSubsystem extends SubsystemBase {
 				//RobotContainer.led1.setStatus(LEDStatus.targetSearching);
 				limeLightCanSeeTag = false;
 			}
+
 		}
+
 
 		if(isSim) {
 

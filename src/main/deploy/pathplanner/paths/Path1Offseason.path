@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 5.9630113636363635,
-        "y": 0.7094460227272736
+        "y": 1.00859375
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.773551136363636,
-        "y": 2.2251278409090913
+        "x": 0.4188068181818183,
+        "y": 3.292088068181818
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.341931818181817,
-        "y": 2.1952130681818187
+        "x": 6.651051136363637,
+        "y": 2.9829687499999995
       },
       "prevControl": {
-        "x": 5.8632954545454545,
-        "y": 2.1752698863636364
+        "x": 4.636751567805893,
+        "y": 2.967354024662342
       },
       "nextControl": {
-        "x": 6.720654845099617,
-        "y": 2.210993194303394
+        "x": 9.22372159090909,
+        "y": 3.002911931818182
       },
       "isLocked": false,
       "linkedName": null
@@ -33,11 +33,11 @@
     {
       "anchor": {
         "x": 5.9630113636363635,
-        "y": 0.7094460227272736
+        "y": 1.00859375
       },
       "prevControl": {
         "x": 6.122556818181818,
-        "y": 1.0983380681818187
+        "y": 1.3974857954545454
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.75,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 0.75,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -58,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": "Offseason",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 90.0
+    "velocity": 0.0,
+    "rotation": -90.0
   },
   "useDefaultConstraints": false
 }

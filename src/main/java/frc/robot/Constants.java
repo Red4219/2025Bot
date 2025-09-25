@@ -31,8 +31,8 @@ public final class Constants {
 	public static boolean enableLogger = true;
 
 	// Photonvision
-	public static boolean kEnablePhotonVision = false;
-	public static boolean kDebugPhotonVision = false;
+	public static boolean kEnablePhotonVision = true;
+	public static boolean kDebugPhotonVision = true;
 
 	// Limelight
 	public static boolean kEnableLimelight = true;
@@ -211,11 +211,11 @@ public final class Constants {
 
 		public static double camDiagFOV = 170.0;
 		public static double camPitch = 0.0;
-		public static double camHeightOffGround = Units.inchesToMeters(6.0);
+		public static double camHeightOffGround = Units.inchesToMeters(40.0);
 		// the side to side position of the camera relative to the robot center
-		public static double camX = Units.inchesToMeters(-12.0);
+		public static double camX = Units.inchesToMeters(0);
 		// the front to back position of the camera relative to the robot center
-		public static double camY = Units.inchesToMeters(0.0);
+		public static double camY = Units.inchesToMeters(0);
 
 		public static Transform3d cameraToRobot = new Transform3d(
                     new Translation3d(
@@ -226,7 +226,7 @@ public final class Constants {
 					new Rotation3d(
 						0,
 						PhotonVisionConstants.camPitch,
-						180
+						0
 					)
 				);
 
