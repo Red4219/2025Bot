@@ -54,6 +54,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.wpilibj.SPI;
@@ -357,6 +359,7 @@ public class DriveSubsystem extends SubsystemBase {
 	// region getters
 	public double getHeading() {
 		if(isSim) {
+			//System.out.println("getHeading is: " + gyro.getRotation2d().getDegrees());
 			return gyro.getRotation2d().getDegrees();
 		}
 		//return gyro.getRotation2d().unaryMinus().getDegrees();
@@ -405,17 +408,6 @@ public class DriveSubsystem extends SubsystemBase {
 			_photonVision.setReferencePose(pose);
 		}
 	}
-	
-	/*public void lockWheels() {
-
-		swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-				new ChassisSpeeds(0, 0, 0));
-
-		SwerveDriveKinematics.desaturateWheelSpeeds(
-				swerveModuleStates, 0);
-
-		setModuleStates(swerveModuleStates);
-	}*/
 
 	public void drive(double xSpeed, double ySpeed, double rot) {
 
@@ -423,12 +415,15 @@ public class DriveSubsystem extends SubsystemBase {
 		xSpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
 		ySpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
 
-		if (gyroTurning) {
-			targetRotationDegrees += rot;
-			rot = gyroTurnPidController.calculate(getHeading360(), targetRotationDegrees);
-		} else {
-			rot *= DriveConstants.kMaxRPM;
-		}
+		// if (gyroTurning) {
+		// //if(gyro.isRotating()) {
+		// 	targetRotationDegrees += rot;
+		// 	rot = gyroTurnPidController.calculate(getHeading360(), targetRotationDegrees);
+		// } else {
+		// 	rot *= DriveConstants.kMaxRPM;
+		// }
+
+		rot *= DriveConstants.kMaxRPM;
 
 		this.xSpeed = xSpeed;
 		this.ySpeed = ySpeed;
@@ -436,21 +431,22 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if(isSim) {
 			swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-				ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+				//ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+				ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, this.poseEstimator.getEstimatedPosition().getRotation())
 			);
 
 			// testing
-			int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
-			SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
-			angle.set(
-				angle.get() 
-				+ ChassisSpeeds.fromFieldRelativeSpeeds(
-					xSpeed, 
-					ySpeed, 
-					rot, 
-					gyro.getRotation2d()
-				).omegaRadiansPerSecond
-			);
+			// int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
+			// SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
+			// angle.set(
+			// 	angle.get() 
+			// 	+ ChassisSpeeds.fromFieldRelativeSpeeds(
+			// 		xSpeed, 
+			// 		ySpeed, 
+			// 		rot, 
+			// 		gyro.getRotation2d()
+			// 	).omegaRadiansPerSecond
+			// );
 			// end testing
 		} else {
 
@@ -486,10 +482,6 @@ public class DriveSubsystem extends SubsystemBase {
 		);
 
 		setModuleStates(swerveModuleStates);
-	}
-
-	public ChassisSpeeds getChassisSpeeds() {
-		return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
 	}
 
 	// This is for auto
@@ -574,7 +566,8 @@ public class DriveSubsystem extends SubsystemBase {
 					phoneEstimatedRobotPose.timestampSeconds,
 					visionMeasurementStdDevs
 				);
-				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision) {
+
+				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
 					// if we are not moving, reset the odometry to the location from the limelight
 					//resetOdometry(limelightMeasurement.pose.rotateBy(rotationOffset180));
 					
@@ -864,7 +857,39 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public void goToPose(Constants.PoseDefinitions.kFieldPoses targetPose) {
 
-		Pose2d pose = null;
+		// Since we are using a holonomic drivetrain, the rotation component of this pose
+		// represents the goal holonomic rotation
+		//public static final Pose2d kProcessorPoseBlue = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(115.655));
+		//Pose2d targettPose = new Pose2d(10, 5, Rotation2d.fromDegrees(180));
+		Pose2d targettPose = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
+
+		// Create the constraints to use while pathfinding
+		PathConstraints constraints = new PathConstraints(
+        	3.0, 4.0,
+        	Units.degreesToRadians(540), Units.degreesToRadians(720)
+		);
+
+		if(DriverStation.getAlliance().get() == Alliance.Blue) {
+			// Since AutoBuilder is configured, we can use it to build pathfinding commands
+			Command pathfindingCommand = AutoBuilder.pathfindToPose(
+				targettPose,
+				constraints,
+				0.0
+			);
+
+			pathfindingCommand.schedule();
+		} else {
+			// Since AutoBuilder is configured, we can use it to build pathfinding commands
+			Command pathfindingCommand = AutoBuilder.pathfindToPoseFlipped(
+				targettPose,
+				constraints,
+				0.0
+			);
+
+			pathfindingCommand.schedule();
+		}
+
+		/*Pose2d pose = null;
 
 		if(targetPose == Constants.PoseDefinitions.kFieldPoses.PROCESSOR) {
 			if (DriverStation.getAlliance().get() == Alliance.Blue) {
@@ -886,8 +911,6 @@ public class DriveSubsystem extends SubsystemBase {
 			return;
 		}
 
-		
-
 		//System.out.println("go to pose called, time is: " + trajectory.getTotalTimeSeconds());
 
 		// Get the adjusted speeds. Here, we want the robot to be facing
@@ -901,6 +924,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 		SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(adjustedSpeeds);
 
-		setModuleStates(moduleStates);
+		setModuleStates(moduleStates);*/
 	}
 }

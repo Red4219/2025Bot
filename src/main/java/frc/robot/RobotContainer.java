@@ -210,72 +210,68 @@ public class RobotContainer {
 	
 				operatorController.rightTrigger().whileTrue(//new SequentialCommandGroup(
 					new EjectCoralNoCheck(0.6)
-					//new EjectCoralCommand()//,
-					//new DriveBackwardsCommand()
-					//new ArmStartCommand(), // this will retract the arm and stop end effector
-					//new StartCommand() // this will retract the arm and move the elevator down
-				//)
 				);
 	
 				// Climber Stuff
-			climbSubsystem.setDefaultCommand(new RunCommand(() -> climbSubsystem.setState(ClimbSubsystem.ClimberState.STOPPED), climbSubsystem));
-			operatorController.button(6).whileTrue(new ClimberUpCommand());
-			operatorController.button(5).whileTrue(new ClimberDownCommand());
+				climbSubsystem.setDefaultCommand(new RunCommand(() -> climbSubsystem.setState(ClimbSubsystem.ClimberState.STOPPED), climbSubsystem));
+				operatorController.button(6).whileTrue(new ClimberUpCommand());
+				operatorController.button(5).whileTrue(new ClimberDownCommand());
 			
 
-			// Move the end effector wheels freely
-			/*operatorController.axisGreaterThan(1, 0.2).whileTrue(
-				new EjectCoralNoCheck(operatorController.getRightX())
-			);*/
+				// Move the end effector wheels freely
+				/*operatorController.axisGreaterThan(1, 0.2).whileTrue(
+					new EjectCoralNoCheck(operatorController.getRightX())
+				);*/
 
-			//driverController.rightTrigger().whileFalse(new StopEjectCoralCommand());
+				//driverController.rightTrigger().whileFalse(new StopEjectCoralCommand());
 			
-			//driverController.button(1).whileTrue(new RunCommand(() -> new ResetPositionCommand()));
+				//driverController.button(1).whileTrue(new RunCommand(() -> new ResetPositionCommand()));
 
-			//driverController.button(1).whileTrue(new RunCommand(() -> sliderSubsystem.setDesiredState(ElevatorSubsystem.ElevatorState.Start)));
+				//driverController.button(1).whileTrue(new RunCommand(() -> sliderSubsystem.setDesiredState(ElevatorSubsystem.ElevatorState.Start)));
 
-			// Swerve Drive method is set as default for drive subsystem
-			driveSubsystem.setDefaultCommand(
-
-				new RunCommand(() -> driveSubsystem.drive(
-					JoystickUtils.processJoystickInput(driverController.getLeftY()),
-					JoystickUtils.processJoystickInput(driverController.getLeftX()),
-					JoystickUtils.processJoystickInput(-driverController.getRightX())
-				),
-				driveSubsystem
-			)
-			);
-			
-		} else {
-
-			// This is for simulation
-			
-			//driverController.button(1).whileTrue(new AutoAlignRightCommand());
-			driverController.button(1).whileTrue(
-				//new EjectCoralNoCheck(0.0)
-				//new Algae1Command()
-				new SequentialCommandGroup(
-					//new RunCommand(() -> endEffectorSubsystem.setDesiredState(EndEffectorState.IntakeHoldAlgae)),
-					new EndEffectorStopCommand(),
-					new ArmStartCommand(),
-					new ElevatorStartCommand()
-				)
-			);
-			
-			// Swerve Drive method is set as default for drive subsystem
-			driveSubsystem.setDefaultCommand(
-
-				//new RunCommand(() -> driveSubsystem.drive(
-				new RunCommand(() -> driveSubsystem.driveRobotRelative(
+				// Swerve Drive method is set as default for drive subsystem
+				driveSubsystem.setDefaultCommand(
+					new RunCommand(() -> driveSubsystem.drive(
 						JoystickUtils.processJoystickInput(driverController.getLeftY()),
 						JoystickUtils.processJoystickInput(driverController.getLeftX()),
-						JoystickUtils.processJoystickInput(-driverController.getRawAxis(2))
-					),
-					driveSubsystem
-				)
-			);
+						JoystickUtils.processJoystickInput(-driverController.getRightX())
+						),
+						driveSubsystem
+					)
+				);
+			
+			} else {
+
+				// This is for simulation
+			
+				//driverController.button(1).whileTrue(new AutoAlignRightCommand());
+				driverController.button(1).whileTrue(
+					//new EjectCoralNoCheck(0.0)
+					//new Algae1Command()
+					new SequentialCommandGroup(
+						//new RunCommand(() -> endEffectorSubsystem.setDesiredState(EndEffectorState.IntakeHoldAlgae)),
+						new EndEffectorStopCommand(),
+						new ArmStartCommand(),
+						new ElevatorStartCommand()
+					)
+				);
+
+				driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+			
+				// Swerve Drive method is set as default for drive subsystem
+				driveSubsystem.setDefaultCommand(
+
+					new RunCommand(() -> driveSubsystem.drive(
+					//new RunCommand(() -> driveSubsystem.driveRobotRelative(
+							JoystickUtils.processJoystickInput(driverController.getLeftY()),
+							JoystickUtils.processJoystickInput(driverController.getLeftX()),
+							JoystickUtils.processJoystickInput(-driverController.getRawAxis(2))
+						),
+						driveSubsystem
+					)
+				);
+			}
 		}
-	}
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();

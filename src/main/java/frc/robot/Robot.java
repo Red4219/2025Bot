@@ -54,6 +54,8 @@ public class Robot extends LoggedRobot {
 
 		/*Logger.recordOutput("Power/BatteryVoltage", RobotController.getBatteryVoltage());
 		Logger.recordOutput("Power/IsBrownedOut", RobotController.isBrownedOut());*/
+		Logger.recordOutput("Power/BatteryVoltage", RobotController.getBatteryVoltage());
+		
 		Logger.recordOutput("CAN/ReceiveErrorCount", RobotController.getCANStatus().receiveErrorCount);
 		Logger.recordOutput("CAN/TransmitErrorCount", RobotController.getCANStatus().transmitErrorCount);
 		Logger.recordOutput("CAN/PercentBusUtilization", RobotController.getCANStatus().percentBusUtilization);

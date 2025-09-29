@@ -50,7 +50,7 @@ public class PhotonVision {
 	//List<PhotonTrackedTarget> targets;
 	private Pose2d prevEstimatedRobotPose = null;
 	//private Pose2d prevPhotonEstimatedPose = null;
-	//List<Pose3d> allTagPoses = new ArrayList<>();
+	List<Pose3d> allTagPoses = new ArrayList<>();
 	private Optional<EstimatedRobotPose> estimatedRobotPose = null;
 
 	//private double[] poseArray = new double[3];
@@ -275,17 +275,25 @@ public class PhotonVision {
 			_visionSystemSim.update(prevEstimatedRobotPose);
 		}
 
-		//if (o.isPresent()) {
 		if (estimatedRobotPose.isPresent()) {
 
-			//_estimatedRobotPose = o.get();
+			// Clear out the tags and let it be filled in if necessary
+			allTagPoses.clear();
+
 			_estimatedRobotPose = estimatedRobotPose.get();
 
-			/*for (PhotonTrackedTarget target : _estimatedRobotPose.targetsUsed) {
-				allTagPoses.add(
-					_aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
+			if (Constants.kDebugPhotonVision) {
+				for (PhotonTrackedTarget target : _estimatedRobotPose.targetsUsed) {
+					allTagPoses.add(
+						_aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
+					);
+				}
+
+				Logger.recordOutput(
+			 		"PhotonVision/TargetsUsed",
+			 		allTagPoses.toArray(new Pose3d[allTagPoses.size()])
 				);
-			}*/
+			}
 
 			//if (Constants.debugPhotonVision) {
 			//	RobotContainer.field.getObject("PhotonEstimatedRobot")
@@ -317,10 +325,25 @@ public class PhotonVision {
 
 				_estimatedRobotPose = null;
 			}*/
+
+			/*if (Constants.kDebugPhotonVision) {
+				Logger.recordOutput(
+					"PhotonVision/TagPoses",
+					allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+
+				_estimatedRobotPose = null;
+			}*/
+
+			if (Constants.kDebugPhotonVision) {
+				Logger.recordOutput(
+					"PhotonVision/TargetsUsed",
+					allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+
+				_estimatedRobotPose = null;
+			}
 		}
 
 		return _estimatedRobotPose;
-
 	}
 
 	// Set the reference 2D (X,Y) pose/position for PhotonVision to use
