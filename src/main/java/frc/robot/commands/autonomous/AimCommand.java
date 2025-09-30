@@ -13,20 +13,21 @@ public class AimCommand extends Command {
     private PhotonVision _photonVision;
     private int _targedNumber = 7;
 
-    public AimCommand(PhotonVision photonVision) {
+    public AimCommand(PhotonVision photonVision, int target) {
          _driveSubsystem = RobotContainer.driveSubsystem;
          addRequirements(_driveSubsystem);
          _photonVision = photonVision;
+         this._targedNumber = target;
     }
 
     @Override
     public void initialize() {
         if(DriverStation.getAlliance().isPresent()) {
-            if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+            /*if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
                 _targedNumber = 7;
             } else {
                 _targedNumber = 4;
-            }
+            }*/
         }
     }
 
@@ -60,19 +61,19 @@ public class AimCommand extends Command {
             return true;
         }
 
-        /*if(_photonVision.canSeeTarget(_targedNumber) == false) {
+        if(_photonVision.canSeeTarget(_targedNumber) == false) {
             System.out.println("AimCommand::isFinished() - cannot see the target so returning true");
             // Stop because we cannot see the target
             return true;
-        }*/
+        }
 
-        //double targetYaw = _photonVision.aimAtTarget(_targedNumber);
+        double targetYaw = _photonVision.aimAtTarget(_targedNumber);
 
-        /*if(targetYaw == 0.0) {
+        if(targetYaw == 0.0) {
             return true;
-        }*/
+        }
 
-        /*if(Math.abs(targetYaw) > Constants.AutoConstants.kAimTargetTolerance) {
+        if(Math.abs(targetYaw) > Constants.AutoConstants.kAimTargetTolerance) {
 
             if(targetYaw > 0) {
                 _driveSubsystem.drive(0.0, 0.0, -.05);
@@ -81,7 +82,7 @@ public class AimCommand extends Command {
             }
             
             return false;
-        }*/
+        }
         
         return true;
     }

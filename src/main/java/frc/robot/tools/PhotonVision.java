@@ -419,7 +419,7 @@ public class PhotonVision {
 	}*/
 
 	// Aim at the specified target
-	/*public double aimAtTarget(int targetNumber) {
+	public double aimAtTarget(int targetNumber) {
 
 		PhotonPipelineResult result = _camera.getLatestResult();
 		List<PhotonTrackedTarget> targets = result.getTargets();
@@ -431,10 +431,10 @@ public class PhotonVision {
 		}
 
 		return 0.0;
-	}*/
+	}
 
 	// Can photon vision see the specified target?
-	/*public boolean canSeeTarget(int targetNumber) {
+	public boolean canSeeTarget(int targetNumber) {
 
 		//PhotonTrackedTarget targetToAimAt = null;
 		PhotonPipelineResult result = _camera.getLatestResult();
@@ -456,7 +456,7 @@ public class PhotonVision {
 		}
 
 		return false;
-	}*/
+	}
 
 	// Need to look this over
 	// This is a private method used only internally

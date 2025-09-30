@@ -45,6 +45,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ModuleConstants;
+import frc.robot.commands.autonomous.AimCommand;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 //import frc.robot.Constants.DriveConstants.kDriveModes;
@@ -859,8 +860,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Since we are using a holonomic drivetrain, the rotation component of this pose
 		// represents the goal holonomic rotation
-		//public static final Pose2d kProcessorPoseBlue = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(115.655));
-		//Pose2d targettPose = new Pose2d(10, 5, Rotation2d.fromDegrees(180));
 		Pose2d targettPose = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
 
 		// Create the constraints to use while pathfinding
@@ -877,7 +876,9 @@ public class DriveSubsystem extends SubsystemBase {
 				0.0
 			);
 
-			pathfindingCommand.schedule();
+			pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).schedule();
+
+			//pathfindingCommand.schedule();
 		} else {
 			// Since AutoBuilder is configured, we can use it to build pathfinding commands
 			Command pathfindingCommand = AutoBuilder.pathfindToPoseFlipped(
@@ -886,7 +887,8 @@ public class DriveSubsystem extends SubsystemBase {
 				0.0
 			);
 
-			pathfindingCommand.schedule();
+			//pathfindingCommand.schedule();
+			pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).schedule();
 		}
 
 		/*Pose2d pose = null;

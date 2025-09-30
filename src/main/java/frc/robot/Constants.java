@@ -189,7 +189,7 @@ public final class Constants {
 			//public static final double kDriveBaseRadius = 0.4; // Drive base radius in meters. Distance from robot center to furthest module.
 		}
 
-		//public static final double kAimTargetTolerance = 2.0;
+		public static final double kAimTargetTolerance = 2.0;
 	}
 
 	/**
