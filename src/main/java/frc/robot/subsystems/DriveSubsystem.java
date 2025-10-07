@@ -864,7 +864,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Create the constraints to use while pathfinding
 		PathConstraints constraints = new PathConstraints(
-        	3.0, 4.0,
+        	1.5, 4.0,
         	Units.degreesToRadians(540), Units.degreesToRadians(720)
 		);
 
