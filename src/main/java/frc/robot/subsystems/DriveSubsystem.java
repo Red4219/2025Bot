@@ -120,14 +120,17 @@ public class DriveSubsystem extends SubsystemBase {
 	private double turnI = ModuleConstants.kModuleTurningGains.kI;
 	private double turnD = ModuleConstants.kModuleTurningGains.kD;
 
-	private Rotation2d rotationOffset180 = new Rotation2d(0);
+	//private Rotation2d rotationOffset180 = new Rotation2d(0);
 
 	/*private double autoDriveP = AutoConstants.PathPLannerConstants.kPPDriveConstants.kP;
 	private double autoDriveI = AutoConstants.PathPLannerConstants.kPPDriveConstants.kI;
 	private double autoDriveD = AutoConstants.PathPLannerConstants.kPPDriveConstants.kD;*/
 
-	Trajectory trajectory = null;
-	Trajectory.State goal = null;
+	private Trajectory trajectory = null;
+	//private Trajectory.State goal = null;
+	private Command pathfindingCommand = null;
+	private boolean gotoPoseRunning = false;
+
 
 	// test for auto positioning
 	HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
@@ -858,6 +861,15 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public void goToPose(Constants.PoseDefinitions.kFieldPoses targetPose) {
 
+		//System.out.println("DriveSubsystem::goToPose() called");
+
+		// If it is running and we call it again, cancel it
+		/*if(gotoPoseRunning) {
+			pathfindingCommand.cancel();
+			gotoPoseRunning = false;
+			return;
+		}*/
+
 		// Since we are using a holonomic drivetrain, the rotation component of this pose
 		// represents the goal holonomic rotation
 		Pose2d targettPose = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
@@ -868,64 +880,54 @@ public class DriveSubsystem extends SubsystemBase {
         	Units.degreesToRadians(540), Units.degreesToRadians(720)
 		);
 
-		if(DriverStation.getAlliance().get() == Alliance.Blue) {
-			// Since AutoBuilder is configured, we can use it to build pathfinding commands
-			Command pathfindingCommand = AutoBuilder.pathfindToPose(
-				targettPose,
-				constraints,
-				0.0
-			);
 
-			pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).schedule();
+		if(DriverStation.getAlliance().isPresent()) {
+			if(DriverStation.getAlliance().get() == Alliance.Blue) {
+				// Since AutoBuilder is configured, we can use it to build pathfinding commands
+				pathfindingCommand = AutoBuilder.pathfindToPose(
+					targettPose,
+					constraints,
+					0.0
+				);
 
-			//pathfindingCommand.schedule();
+				//pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning).schedule();
+				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning);
+				pathfindingCommand.schedule();
+
+				//pathfindingCommand.schedule();
+			} else {
+				// Since AutoBuilder is configured, we can use it to build pathfinding commands
+				pathfindingCommand = AutoBuilder.pathfindToPoseFlipped(
+					targettPose,
+					constraints,
+					0.0
+				);
+
+				//pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning).schedule();
+				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning);
+				pathfindingCommand.schedule();
+			}
 		} else {
-			// Since AutoBuilder is configured, we can use it to build pathfinding commands
-			Command pathfindingCommand = AutoBuilder.pathfindToPoseFlipped(
-				targettPose,
-				constraints,
-				0.0
-			);
-
-			//pathfindingCommand.schedule();
-			pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).schedule();
+			System.out.println("DriveSubsystem::gotoPose() called, but DriverStation.getAlliance() is null");
 		}
+	}
 
-		/*Pose2d pose = null;
+	public void gotoPoseCancel() {
+		if(pathfindingCommand != null) {
+			pathfindingCommand.cancel();
+			pathfindingCommand.end(true);
 
-		if(targetPose == Constants.PoseDefinitions.kFieldPoses.PROCESSOR) {
-			if (DriverStation.getAlliance().get() == Alliance.Blue) {
-				pose = Constants.PoseDefinitions.kProcessorPoseBlue;
-			} else {
-				pose = Constants.PoseDefinitions.kProcessorPoseRed;
-			}
-		} else if(targetPose == Constants.PoseDefinitions.kFieldPoses.REEF) {
-			if (DriverStation.getAlliance().get() == Alliance.Blue) {
-				pose = Constants.PoseDefinitions.kReefPoseBlue;
-			} else {
-				pose = Constants.PoseDefinitions.kReefPoseRed;
-			}
+			//System.out.println("DriveSubsystem::gotoPoseCancel() setting it to false");
+			gotoPoseRunning = false;
 		}
+	}
 
-		goal = generateTrajectory(pose);
+	public void gotoPoseRunning(boolean running) {
+		//System.out.println("DriveSubsystem::gotoPoseRunning() setting it to " + running);
+		gotoPoseRunning = running;
+	}
 
-		if(goal == null) {
-			return;
-		}
-
-		//System.out.println("go to pose called, time is: " + trajectory.getTotalTimeSeconds());
-
-		// Get the adjusted speeds. Here, we want the robot to be facing
-		// 180 degrees (in the field-relative coordinate system).
-		ChassisSpeeds adjustedSpeeds = holonomicDriveController.calculate(
-  			//getPose(),
-			getPoseEstimatorPose2d(),
-			goal,
-			pose.getRotation()
-		);
-
-		SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(adjustedSpeeds);
-
-		setModuleStates(moduleStates);*/
+	public boolean isGotoPoseRunning() {
+		return gotoPoseRunning;
 	}
 }

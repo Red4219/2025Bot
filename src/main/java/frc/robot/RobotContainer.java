@@ -23,6 +23,7 @@ import frc.robot.tools.parts.PathBuilder;
 import frc.robot.mechanisms.LED;
 import frc.robot.mechanisms.LED.LEDStatus;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.PoseDefinitions.kFieldPoses;
 import frc.robot.commands.Algae1Command;
 import frc.robot.commands.Algae2Command;
 import frc.robot.commands.AlgaeFloorCommand;
@@ -78,14 +79,28 @@ public class RobotContainer {
 
 	private final CommandXboxController driverController = new CommandXboxController(0);
 	private final CommandXboxController operatorController = new CommandXboxController(1);
-
-
-
-		private SendableChooser<Command> autoChooser = new SendableChooser<>();
+	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 	
-		public SendableChooser<Command> getAutoChooser() {
-			return autoChooser;
-		}
+	public SendableChooser<Command> getAutoChooser() {
+		return autoChooser;
+	}
+
+	public void goToPose(kFieldPoses targetPose) {
+
+		//System.out.println("RobotContainer::goToPose() called, running is: " + driveSubsystem.isGotoPoseRunning());
+			
+		/*if(driveSubsystem.isGotoPoseRunning()) {
+			driveSubsystem.gotoPoseCancel();
+		} else {
+			driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR);
+		}*/	
+
+		driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR);
+	}
+
+	public void gotoPoseCancel() {
+		driveSubsystem.gotoPoseCancel();
+	}
 	
 		/**
 		 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -192,6 +207,7 @@ public class RobotContainer {
 
 				// Go to position
 				driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+				driverController.button(3).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
 	
 				operatorController.button(1).whileTrue(new SequentialCommandGroup(
 					new EndEffectorStopCommand(),
@@ -232,9 +248,9 @@ public class RobotContainer {
 				// Swerve Drive method is set as default for drive subsystem
 				driveSubsystem.setDefaultCommand(
 					new RunCommand(() -> driveSubsystem.drive(
-						JoystickUtils.processJoystickInput(driverController.getLeftY()),
-						JoystickUtils.processJoystickInput(driverController.getLeftX()),
-						JoystickUtils.processJoystickInput(-driverController.getRightX())
+							JoystickUtils.processJoystickInput(driverController.getLeftY()),
+							JoystickUtils.processJoystickInput(driverController.getLeftX()),
+							JoystickUtils.processJoystickInput(-driverController.getRightX())
 						),
 						driveSubsystem
 					)
@@ -256,7 +272,10 @@ public class RobotContainer {
 					)
 				);
 
-				driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+				//driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+				driverController.button(4).whileTrue(new RunCommand(() -> goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+				driverController.button(3).whileTrue(new RunCommand(() -> gotoPoseCancel()));
+				//driverController.button(4).onTrue(new RunCommand(() -> goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
 			
 				// Swerve Drive method is set as default for drive subsystem
 				driveSubsystem.setDefaultCommand(

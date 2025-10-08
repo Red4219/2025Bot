@@ -7,6 +7,12 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 //import com.revrobotics.REVPhysicsSim;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -23,6 +29,11 @@ public class Robot extends LoggedRobot {
 	private ElevatorSubsystem elevatorSystem = RobotContainer.elevatorSubsystem;
 	private RobotContainer robotContainer;
 	//private REVPhysicsSim simulator;
+
+	private NetworkTableInstance inst;
+	private NetworkTable table;
+	private IntegerSubscriber gotoPositionSubscriber;
+	private IntegerPublisher gotoPositiionPublisher;
 
 	@Override
 	public void robotInit() {
@@ -45,6 +56,12 @@ public class Robot extends LoggedRobot {
 
 		// This is for advantagekit
 		Logger.start();
+
+		inst = NetworkTableInstance.getDefault();
+		table = inst.getTable("Shuffleboard");
+
+		gotoPositionSubscriber = table.getIntegerTopic("gotoPosition").subscribe(0); // default value
+		gotoPositiionPublisher = table.getIntegerTopic("gotoPosition").publish(PubSubOption.keepDuplicates(false));
 	}
 
 	@Override
@@ -59,6 +76,26 @@ public class Robot extends LoggedRobot {
 		Logger.recordOutput("CAN/ReceiveErrorCount", RobotController.getCANStatus().receiveErrorCount);
 		Logger.recordOutput("CAN/TransmitErrorCount", RobotController.getCANStatus().transmitErrorCount);
 		Logger.recordOutput("CAN/PercentBusUtilization", RobotController.getCANStatus().percentBusUtilization);
+		
+		int p = (int) gotoPositionSubscriber.get();
+		//System.out.println("gotoPosition " + p);
+
+		switch(p) {
+			case -1:
+				// cancel the goto pose
+				robotContainer.gotoPoseCancel();
+				gotoPositiionPublisher.set(0);
+				break;
+			case 0:
+				// dont' do anything
+				break;
+			case 1:
+				robotContainer.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR);
+				gotoPositiionPublisher.set(0);
+				break;
+			case 2:
+				break;
+		}
 	}
 
 	@Override
