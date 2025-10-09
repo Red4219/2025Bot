@@ -872,7 +872,25 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Since we are using a holonomic drivetrain, the rotation component of this pose
 		// represents the goal holonomic rotation
-		Pose2d targettPose = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
+		//Pose2d targettPose = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
+		//Pose2d targettPose = Constants.PoseDefinitions.APRILTAG_3;
+
+		Pose2d targettPose = null;
+		int target = 0;
+
+		switch (targetPose) {
+			case APRILTAG_3:
+				targettPose = Constants.PoseDefinitions.APRILTAG_3;
+				target = 3;
+				break;
+			case APRILTAG_9:
+				targettPose = Constants.PoseDefinitions.APRILTAG_9;
+				target = 9;
+				break;
+			default:
+				break;
+			
+		}
 
 		// Create the constraints to use while pathfinding
 		PathConstraints constraints = new PathConstraints(
@@ -891,7 +909,7 @@ public class DriveSubsystem extends SubsystemBase {
 				);
 
 				//pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning).schedule();
-				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning);
+				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, target)).finallyDo(this::gotoPoseRunning);
 				pathfindingCommand.schedule();
 
 				//pathfindingCommand.schedule();
@@ -904,7 +922,7 @@ public class DriveSubsystem extends SubsystemBase {
 				);
 
 				//pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning).schedule();
-				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning);
+				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, target)).finallyDo(this::gotoPoseRunning);
 				pathfindingCommand.schedule();
 			}
 		} else {

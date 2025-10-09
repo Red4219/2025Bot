@@ -390,16 +390,21 @@ public final class Constants {
 		public static double ClimberUp = 12.0;
 		public static double ClimberDown = 9.0;
 	}
-	
+
 	public static class PoseDefinitions {
 		public static enum kFieldPoses {
-			PROCESSOR,
-			REEF
+			//PROCESSOR,
+			//REEF,
+			APRILTAG_3,
+			APRILTAG_9
 		}
 
-		public static final Pose2d kProcessorPoseRed = new Pose2d(14.73, 7.69, Rotation2d.fromDegrees(90.0));
+		/*public static final Pose2d kProcessorPoseRed = new Pose2d(14.73, 7.69, Rotation2d.fromDegrees(90.0));
 		public static final Pose2d kProcessorPoseBlue = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(115.655));
 		public static final Pose2d kReefPoseRed = new Pose2d(0.98, 1.05, Rotation2d.fromDegrees(-120.16));
-		public static final Pose2d kReefPoseBlue = new Pose2d(15.35, 0.88, Rotation2d.fromDegrees(-120.0));
+		public static final Pose2d kReefPoseBlue = new Pose2d(15.35, 0.88, Rotation2d.fromDegrees(-120.0));*/
+
+		public static final Pose2d APRILTAG_3 = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
+		public static final Pose2d APRILTAG_9 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));
 	}
 }

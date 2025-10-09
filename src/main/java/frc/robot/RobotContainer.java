@@ -95,7 +95,8 @@ public class RobotContainer {
 			driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR);
 		}*/	
 
-		driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR);
+		//driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR);
+		driveSubsystem.goToPose(targetPose);
 	}
 
 	public void gotoPoseCancel() {
@@ -206,8 +207,8 @@ public class RobotContainer {
 				driverController.rightBumper().whileTrue(new AutoAlignRightCommand());
 
 				// Go to position
-				driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
-				driverController.button(3).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+				driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.APRILTAG_3)));
+				driverController.button(3).whileTrue(new RunCommand(() -> gotoPoseCancel()));
 	
 				operatorController.button(1).whileTrue(new SequentialCommandGroup(
 					new EndEffectorStopCommand(),
@@ -273,7 +274,7 @@ public class RobotContainer {
 				);
 
 				//driverController.button(4).whileTrue(new RunCommand(() -> driveSubsystem.goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
-				driverController.button(4).whileTrue(new RunCommand(() -> goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
+				driverController.button(4).whileTrue(new RunCommand(() -> goToPose(Constants.PoseDefinitions.kFieldPoses.APRILTAG_3)));
 				driverController.button(3).whileTrue(new RunCommand(() -> gotoPoseCancel()));
 				//driverController.button(4).onTrue(new RunCommand(() -> goToPose(Constants.PoseDefinitions.kFieldPoses.PROCESSOR)));
 			
