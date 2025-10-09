@@ -95,6 +95,10 @@ public class Robot extends LoggedRobot {
 				break;
 			case 2:
 				break;
+			case 4:
+				robotContainer.goToPose(Constants.PoseDefinitions.kFieldPoses.APRILTAG_4);
+				gotoPositiionPublisher.set(0);
+				break;
 			case 9:
 				robotContainer.goToPose(Constants.PoseDefinitions.kFieldPoses.APRILTAG_9);
 				gotoPositiionPublisher.set(0);

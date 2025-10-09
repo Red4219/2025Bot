@@ -863,18 +863,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 		//System.out.println("DriveSubsystem::goToPose() called");
 
-		// If it is running and we call it again, cancel it
-		/*if(gotoPoseRunning) {
-			pathfindingCommand.cancel();
-			gotoPoseRunning = false;
-			return;
-		}*/
-
-		// Since we are using a holonomic drivetrain, the rotation component of this pose
-		// represents the goal holonomic rotation
-		//Pose2d targettPose = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
-		//Pose2d targettPose = Constants.PoseDefinitions.APRILTAG_3;
-
 		Pose2d targettPose = null;
 		int target = 0;
 
@@ -883,9 +871,17 @@ public class DriveSubsystem extends SubsystemBase {
 				targettPose = Constants.PoseDefinitions.APRILTAG_3;
 				target = 3;
 				break;
+			case APRILTAG_4:
+				targettPose = Constants.PoseDefinitions.APRILTAG_4;
+				target = 4;
+				break;
 			case APRILTAG_9:
 				targettPose = Constants.PoseDefinitions.APRILTAG_9;
 				target = 9;
+				break;
+			case APRILTAG_10:
+				targettPose = Constants.PoseDefinitions.APRILTAG_10;
+				target = 10;
 				break;
 			default:
 				break;
@@ -898,7 +894,6 @@ public class DriveSubsystem extends SubsystemBase {
         	Units.degreesToRadians(540), Units.degreesToRadians(720)
 		);
 
-
 		if(DriverStation.getAlliance().isPresent()) {
 			if(DriverStation.getAlliance().get() == Alliance.Blue) {
 				// Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -908,11 +903,8 @@ public class DriveSubsystem extends SubsystemBase {
 					0.0
 				);
 
-				//pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning).schedule();
 				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, target)).finallyDo(this::gotoPoseRunning);
 				pathfindingCommand.schedule();
-
-				//pathfindingCommand.schedule();
 			} else {
 				// Since AutoBuilder is configured, we can use it to build pathfinding commands
 				pathfindingCommand = AutoBuilder.pathfindToPoseFlipped(
@@ -921,7 +913,6 @@ public class DriveSubsystem extends SubsystemBase {
 					0.0
 				);
 
-				//pathfindingCommand.andThen(new AimCommand(_photonVision, 3)).finallyDo(this::gotoPoseRunning).schedule();
 				pathfindingCommand = pathfindingCommand.andThen(new AimCommand(_photonVision, target)).finallyDo(this::gotoPoseRunning);
 				pathfindingCommand.schedule();
 			}

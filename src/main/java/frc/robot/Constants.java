@@ -393,10 +393,10 @@ public final class Constants {
 
 	public static class PoseDefinitions {
 		public static enum kFieldPoses {
-			//PROCESSOR,
-			//REEF,
 			APRILTAG_3,
-			APRILTAG_9
+			APRILTAG_4,
+			APRILTAG_9,
+			APRILTAG_10
 		}
 
 		/*public static final Pose2d kProcessorPoseRed = new Pose2d(14.73, 7.69, Rotation2d.fromDegrees(90.0));
@@ -405,6 +405,8 @@ public final class Constants {
 		public static final Pose2d kReefPoseBlue = new Pose2d(15.35, 0.88, Rotation2d.fromDegrees(-120.0));*/
 
 		public static final Pose2d APRILTAG_3 = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
-		public static final Pose2d APRILTAG_9 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));
+		public static final Pose2d APRILTAG_4 = new Pose2d(8.5, 2.0, Rotation2d.fromDegrees(0));
+		public static final Pose2d APRILTAG_9 = new Pose2d(5.4, 2.9, Rotation2d.fromDegrees(110));
+		public static final Pose2d APRILTAG_10 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));
 	}
 }
