@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -60,6 +62,9 @@ public final class Constants {
 
 	public static class ModuleConstants {
 
+		public static final String[] song = {"EvangelionMisato.chrp", "EvangelionCAT.chrp"}; 
+		public static final Boolean enableMusic = true;
+
 		// Current limits for the wheels
 		//public static final int kTurnMotorCurrentLimit = 25;
 		//public static final int kDriveMotorCurrentLimit = 35;
@@ -76,7 +81,7 @@ public final class Constants {
 
 		// The max speed the modules are capable of
 		//public static final double kMaxModuleSpeedMetersPerSecond = Units.feetToMeters(16.5);
-		public static final double kMaxModuleSpeedMetersPerSecond = 16.5;
+		public static final double kMaxModuleSpeedMetersPerSecond = 17.1;
 
 		//public static final double ksVolts = .1;
 		//public static final double kDriveFeedForward = .2;

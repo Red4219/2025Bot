@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -61,6 +62,7 @@ import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.EndEffectorSubsystem.EndEffectorState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.mechanisms.SwerveModule;
 
 public class RobotContainer {
 
@@ -146,7 +148,36 @@ public class RobotContainer {
 			if(RobotBase.isReal()) {
 				// Real, not a simulation
 	
-				
+				driverController.button(5).onTrue(new SequentialCommandGroup(
+					Commands.runOnce(() -> {
+						for (SwerveModule i : driveSubsystem.swerveList) {
+							i.selectSong(0);
+							i.playSong();
+						}
+					}, driveSubsystem)
+				));
+				driverController.button(2).onTrue(new SequentialCommandGroup(
+					Commands.runOnce(() -> {
+						for (SwerveModule i : driveSubsystem.swerveList) {
+							i.selectSong(1);
+							i.playSong();
+						}
+					}, driveSubsystem)
+				));
+				driverController.button(6).onTrue(new SequentialCommandGroup(
+					Commands.runOnce(() -> {
+						for (SwerveModule i : driveSubsystem.swerveList) {
+							i.pauseSong();
+						}
+					}, driveSubsystem)
+				));
+				driverController.button(7).onTrue(new SequentialCommandGroup(
+					Commands.runOnce(() -> {
+						for (SwerveModule i : driveSubsystem.swerveList) {
+							i.stopSong();
+						}
+					}, driveSubsystem)
+				));
 	
 				// Coral stuck on battery command - repeat command if coral is still stuck.
 				// driverController.button(2).whileTrue(new FailsafeCoralCommand());

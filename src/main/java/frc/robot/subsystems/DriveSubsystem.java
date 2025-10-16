@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
@@ -51,6 +52,7 @@ import frc.robot.RobotContainer;
 //import frc.robot.Constants.DriveConstants.kDriveModes;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -77,6 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private final SwerveModule frontRight;
 	private final SwerveModule rearLeft;
 	private final SwerveModule rearRight;
+	public List<SwerveModule> swerveList;
+	
 
 	private SwerveModulePosition[] swervePosition;
 	private SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -198,7 +202,8 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				true
+				// true
+				InvertedValue.Clockwise_Positive
 
 			);
 
@@ -211,7 +216,8 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				true
+				// true
+				InvertedValue.Clockwise_Positive
 			);
 
 		rearLeft = new SwerveModule(
@@ -223,7 +229,8 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				true
+				// true
+				InvertedValue.Clockwise_Positive
 			);
 
 		rearRight = new SwerveModule(
@@ -235,8 +242,15 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains,
 				true,
-				true
+				// true
+				InvertedValue.Clockwise_Positive
 			);
+
+		swerveList = new ArrayList<SwerveModule>();
+		swerveList.add(frontLeft);
+		swerveList.add(frontRight);
+		swerveList.add(rearLeft);
+		swerveList.add(rearRight);
 
 		swervePosition = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
