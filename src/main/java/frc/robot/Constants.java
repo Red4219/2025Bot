@@ -130,7 +130,7 @@ public final class Constants {
 		public static final double kRearLeftAngleZero = 0.0;
 		public static final double kRearRightAngleZero = 0.0;
 
-		public static final PIDGains kModuleDriveGains = new PIDGains(0.1, 0, 0);
+		public static final PIDGains kModuleDriveGains = new PIDGains(0.01, 0, 0);
 		public static final PIDGains kModuleTurningGains = new PIDGains(5.5, 0.0, 0.0);
 	}
 

@@ -168,7 +168,7 @@ public class SwerveModule {
 		
 		
 		
-		
+		driveMotor.getConfigurator().apply(driveConfig);
 		driveMotor.getConfigurator().apply(slot0Configs);
 
 		
@@ -221,9 +221,9 @@ public class SwerveModule {
         turnConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
 			.pid(
-				Constants.DriveConstants.kGyroTurningGains.kP, 
-				Constants.DriveConstants.kGyroTurningGains.kI, 
-				Constants.DriveConstants.kGyroTurningGains.kD
+				Constants.ModuleConstants.kModuleDriveGains.kP, 
+				Constants.ModuleConstants.kModuleDriveGains.kI, 
+				Constants.ModuleConstants.kModuleDriveGains.kD
 			);
         turnConfig.signals.primaryEncoderPositionPeriodMs(5);
 
@@ -329,7 +329,7 @@ public class SwerveModule {
 		// 	* ModuleConstants.kwheelCircumference
 		// 	//ModuleConstants.kwheelCircumference / ModuleConstants.kdriveGearRatioL3 
 		// 	* (1d / 60d)
-		double veloRps = ((velocity/ModuleConstants.kwheelCircumference)*6.12);
+		double veloRps = ((velocity/ModuleConstants.kwheelCircumference)*6.12)/60;
 		return veloRps;
 
 	}

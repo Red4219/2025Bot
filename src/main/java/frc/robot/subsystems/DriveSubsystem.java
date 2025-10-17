@@ -102,6 +102,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private LimelightHelpers.PoseEstimate limelightMeasurement = null;
 
 	// Odeometry class for tracking robot pose
+	// TODO test odometry with the new kraken code
 	private SwerveDriveOdometry odometry;
 	private boolean limeLightCanSeeTag = false;
 	//private boolean photonVisionCanSeeTag = false;
