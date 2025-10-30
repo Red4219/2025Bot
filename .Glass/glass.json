@@ -3,6 +3,12 @@
     "transitory": {
       "limelight-left": {
         "open": true
+      },
+      "photonvision": {
+        "cam1": {
+          "open": true
+        },
+        "open": true
       }
     },
     "types": {

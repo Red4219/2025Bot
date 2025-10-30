@@ -34,7 +34,11 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class PhotonVision {
 	private PhotonCamera _camera;
+	private PhotonCamera _camera2;
 	
+	
+	
+
 	// simulation variables
 	private VisionSystemSim _visionSystemSim = null;
 	private Pose3d _sim_farTargetPose = null;
@@ -75,6 +79,7 @@ public class PhotonVision {
 			}
 
 			_camera = new PhotonCamera(PhotonVisionConstants.CameraName);
+			_camera2 = new PhotonCamera(PhotonVisionConstants.Camera2Name);
 
 			try {
 				// This sets up the field with the correct Apriltags in the proper places
@@ -122,6 +127,19 @@ public class PhotonVision {
 				} else {
 					System.out.println("PhotonVision::PhotonVision() - _camera is null");
 				}
+
+				if (_camera2 != null) {
+					if (_camera2.isConnected()) {
+						_photonPoseEstimator = new PhotonPoseEstimator(_aprilTagFieldLayout, 
+							Constants.PhotonVisionConstants.poseStrategy, 
+							Constants.PhotonVisionConstants.camera2ToRobot
+						);
+					} else {
+						System.out.println("PhotonVision::PhotonVision() - the camera is not connected");
+					}
+				} else {
+					System.out.println("PhotonVision::PhotonVision() - _camera is null");
+				}
 			}
 
 			// Create the elements in Shuffleboard for debugging if debugPhotonVision is true 
@@ -132,6 +150,12 @@ public class PhotonVision {
 				photonVisionTab.addBoolean("Connection", this::isConnected);
 				//photonVisionTab.addBoolean("Has Target", this::hasTarget);
 				//photonVisionTab.addString("Targets Used", this::targetsUsed);
+			}
+
+			if (_camera2.isConnected() && Constants.kDebugPhotonVision == true) {
+				photonVisionTab = Shuffleboard.getTab("PhotonVision");
+				photonVisionTab.addBoolean("Cam2", this::isConnected2);
+			
 			}
 
 			// Start a new thread that runs faster ~10 milliseconds instead of ~20 milliseconds
@@ -252,6 +276,7 @@ public class PhotonVision {
 	// Is the camera connected?
 	public boolean isConnected() {
 		if(Constants.kEnablePhotonVision) {
+
 			if(_camera != null) {
 				return _camera.isConnected();
 			} else {
@@ -261,6 +286,19 @@ public class PhotonVision {
 			return false;
 		}
 	}
+	public boolean isConnected2() {
+		if(Constants.kEnablePhotonVision) {
+
+			if(_camera2 != null) {
+				return _camera2.isConnected();
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
 
 	// Get the pose/location on the field that photonvision thinks the robot is at
 	public EstimatedRobotPose getPose(Pose2d prevEstimatedRobotPose) {
@@ -438,8 +476,8 @@ public class PhotonVision {
 
 		//PhotonTrackedTarget targetToAimAt = null;
 		PhotonPipelineResult result = _camera.getLatestResult();
-
-		if(result.hasTargets() == false) {
+		PhotonPipelineResult result2 = _camera2.getLatestResult();
+		if(result.hasTargets() == false || result2.hasTargets() == false) {
 			//System.out.println("Don't see any targets");
 			return false;
 		}
@@ -447,8 +485,15 @@ public class PhotonVision {
 		// if we get here, we can see some targets, just might not be the correct one
 
 		List<PhotonTrackedTarget> targets = result.getTargets();
+		List<PhotonTrackedTarget> targets2 = result.getTargets();
 
 		for(PhotonTrackedTarget target: targets) {
+			if(target.getFiducialId() == targetNumber) {
+				//System.out.println("target: " + target.getFiducialId());
+				return true;
+			}
+		}
+		for(PhotonTrackedTarget target: targets2) {
 			if(target.getFiducialId() == targetNumber) {
 				//System.out.println("target: " + target.getFiducialId());
 				return true;
@@ -477,7 +522,7 @@ public class PhotonVision {
 				}
 
 				estimatedRobotPose = _photonPoseEstimator.update(_camera.getLatestResult());
-
+				estimatedRobotPose = _photonPoseEstimator.update(_camera2.getLatestResult());
 				
 
 				/*allTagPoses.clear();

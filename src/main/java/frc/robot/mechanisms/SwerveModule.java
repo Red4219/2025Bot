@@ -248,6 +248,8 @@ public class SwerveModule {
 		}
 	}
 
+	// TODO: cleanup methods make sure they are compatible with new krakens
+
 	// Returns headings of the module
 	public double getAbsoluteHeading() {
 		return (cancoder.getAbsolutePosition().refresh().getValueAsDouble() * 360);
@@ -312,7 +314,8 @@ public class SwerveModule {
 			// 	ControlType.kVelocity
 			// 	//ControlType.kMAXMotionVelocityControl
 			// );
-			targetVelo.Velocity = velocityToRPS(desiredState.speedMetersPerSecond);
+			//targetVelo.Velocity = velocityToRPS(desiredState.speedMetersPerSecond);
+			targetVelo.Velocity = desiredState.speedMetersPerSecond;
 			driveMotor.setControl(targetVelo);
 		}
 

@@ -49,7 +49,7 @@ public final class Constants {
 	public static boolean kEnableDebugArm = true;
 
 	// Elevator
-	public static boolean kEnableElevator = true;
+	public static boolean kEnableElevator = false;
 	public static boolean kEnableDebugElevator = true;
 
 	// End Effector
@@ -62,7 +62,7 @@ public final class Constants {
 
 	public static class ModuleConstants {
 
-		public static final String[] song = {"EvangelionMisato.chrp", "EvangelionCAT.chrp"}; 
+		public static final String[] song = {"EvangelionMisato.chrp", "EvangelionCAT.chrp", "FetyWap.chrp"}; 
 		public static final Boolean enableMusic = true;
 
 		// Current limits for the wheels
@@ -221,11 +221,15 @@ public final class Constants {
 
 		public static double camDiagFOV = 170.0;
 		public static double camPitch = 0.0;
+		public static double cam2Pitch = 0.0;
 		public static double camHeightOffGround = Units.inchesToMeters(40.0);
+		public static double cam2HeightOffGround = Units.inchesToMeters(40.0);
 		// the side to side position of the camera relative to the robot center
 		public static double camX = Units.inchesToMeters(0);
+		public static double cam2X = Units.inchesToMeters(0);
 		// the front to back position of the camera relative to the robot center
 		public static double camY = Units.inchesToMeters(0);
+		public static double cam2Y = Units.inchesToMeters(0);
 
 		public static Transform3d cameraToRobot = new Transform3d(
                     new Translation3d(
@@ -239,8 +243,22 @@ public final class Constants {
 						0
 					)
 				);
+		public static Transform3d camera2ToRobot = new Transform3d(
+                    new Translation3d(
+						cam2X,
+						cam2Y,
+					 	PhotonVisionConstants.cam2HeightOffGround
+					),
+					new Rotation3d(
+						0,
+						PhotonVisionConstants.cam2Pitch,
+						180
+					)
+				);
 
 		public static final String CameraName = "cam1";
+		public static final String Camera2Name = "cam2";
+
 
 		// Simulated Vision System.
     	// Configure these to match your PhotonVision Camera,
@@ -361,8 +379,8 @@ public final class Constants {
 	}
 
 	public static class ElevatorConstants {
-		public static int motor_id = 32;
-		public static int motor2_id = 33;
+		public static int motor_id = 33;
+		public static int motor2_id = 32;
 		//public static double P = 0.1; // bore encoder testing
 
 		public static double P = 0.055;
