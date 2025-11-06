@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEvent;
@@ -50,6 +51,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -67,7 +69,7 @@ public class SwerveModule {
 	private final TalonFX driveMotor;
 	private VelocityDutyCycle targetVelo = new VelocityDutyCycle(0);
 	// private SparkFlexSim driveFlexSim = null;
-	private TalonFXSimState driveFlexSim = null;
+	private TalonFXSimState talonFXSimState = null;
 	private final SparkMax turningMotor;
 	private SparkMaxSim turningMaxSim = null;
 	private final CANcoder cancoder;
@@ -99,6 +101,8 @@ public class SwerveModule {
 	SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
 			ModuleConstants.ksTurning, ModuleConstants.kvTurning);
 
+	private DCMotorSim m_motorSimModel = null;
+
 	public SwerveModule(
 			String moduleName,
 			int driveMotorChannel,
@@ -126,15 +130,28 @@ public class SwerveModule {
 		// driveMotor = new SparkFlex(driveMotorChannel, MotorType.kBrushless);
 		driveMotor = new TalonFX(driveMotorChannel);
 		
-		if (ModuleConstants.enableMusic){
+		/*if (ModuleConstants.enableMusic){
 			kOrchestra = new Orchestra();
 			kOrchestra.addInstrument(driveMotor);
-		}
+		}*/
 
 
 		if(isSim) {
 			// driveFlexSim = new SparkFlexSim(driveMotor, DCMotor.getNeoVortex(1));
-			driveFlexSim = driveMotor.getSimState();
+			talonFXSimState = driveMotor.getSimState();
+
+			// This is for the siumulator to simulate the movement of the motors
+			m_motorSimModel = new DCMotorSim(
+				LinearSystemId.createDCMotorSystem(
+					DCMotor.getKrakenX60Foc(1),
+					0.001, 
+					Constants.ModuleConstants.kdriveGearRatioL3
+				), 
+				DCMotor.getKrakenX60Foc(1)
+				,0.00, 0.00 // not sure about these
+			);
+
+			talonFXSimState.setSupplyVoltage(12.0);
 		}
 		
 		turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
@@ -144,7 +161,6 @@ public class SwerveModule {
 		}
 
 		cancoder = new CANcoder(absoluteEncoderPort, Constants.kCanivoreCANBusName);
-		//cancoder = new CANcoder(absoluteEncoderPort);
 		cancoder.clearStickyFaults();
 		
 		TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -156,6 +172,7 @@ public class SwerveModule {
 		);
 		driveConfig.Audio.AllowMusicDurDisable = true;
 		
+		driveMotor.getConfigurator().apply(driveConfig);
 
 		var slot0Configs = new Slot0Configs();
 		slot0Configs.kS = 0.1;
@@ -163,15 +180,11 @@ public class SwerveModule {
 		slot0Configs.kP = drivePID.kP; // An error of 1 rps results in 0.11 V output
 		slot0Configs.kI = drivePID.kI; // no output for integrated error
 		slot0Configs.kD = drivePID.kD; // no output for error derivative
-		
-		
-		
-		
-		
-		driveMotor.getConfigurator().apply(driveConfig);
 		driveMotor.getConfigurator().apply(slot0Configs);
 
-		
+		FeedbackConfigs feedbackConfig = new FeedbackConfigs();
+		feedbackConfig.withRotorToSensorRatio(ModuleConstants.kdriveGearRatioL3); 
+		driveMotor.getConfigurator().apply(feedbackConfig);
 
 		// driveConfig = new SparkFlexConfig();
 
@@ -257,6 +270,7 @@ public class SwerveModule {
 
 	public double getDistanceMeters() {
 		// return driveEncoder.getPosition();
+		//return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
 		return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
 	}
 
@@ -307,6 +321,23 @@ public class SwerveModule {
         	// 	RoboRioSim.getVInVoltage(), // Simulated battery voltage, in Volts
         	// 	0.02
 			// );
+			//talonFXSimState.setSupplyVoltage(desiredState.speedMetersPerSecond);
+			//var motorVoltage = talonFXSimState.getMotorVoltageMeasure();
+			//m_motorSimModel.setInput(desiredState.);
+			//m_motorSimModel.setInputVoltage(desiredState.speedMetersPerSecond);
+			//m_motorSimModel.setInputVoltage(velocityToRPS(desiredState.speedMetersPerSecond));
+			//m_motorSimModel.setAngularVelocity(desiredState.speedMetersPerSecond);
+			
+			//m_motorSimModel.setAngularVelocity(linearVelocityToRevolutionsPerSecond(desiredState.speedMetersPerSecond, .5));
+			m_motorSimModel.setAngularVelocity(100);
+
+			//m_motorSimModel.setInputVoltage(desiredState.speedMetersPerSecond);
+			m_motorSimModel.update(0.020); // assumeds 20 ms loop time
+
+			//talonFXSimState.setRawRotorPosition(m_motorSimModel.getAngularPosition().times(Constants.ModuleConstants.kdriveGearRatioL3));
+			talonFXSimState.setRawRotorPosition(m_motorSimModel.getAngularPosition());
+			//talonFXSimState.setRotorVelocity(m_motorSimModel.getAngularVelocity().times(Constants.ModuleConstants.kdriveGearRatioL3));
+			talonFXSimState.setRotorVelocity(m_motorSimModel.getAngularVelocity());
 
 		} else {
 			// sparkDrivePID.setReference(
@@ -336,6 +367,23 @@ public class SwerveModule {
 		return veloRps;
 
 	}
+
+	public static double linearVelocityToRevolutionsPerSecond(double linearVelocity, double radius) {
+        if (radius <= 0) {
+            throw new IllegalArgumentException("Radius must be a positive value.");
+        }
+
+        // 1. Calculate angular velocity in radians per second
+        // ω = v / r
+        //double angularVelocityRadPerSec = linearVelocity / radius;
+		return linearVelocity / radius;
+
+        // 2. Convert radians per second to revolutions per second
+        // 1 revolution = 2π radians
+        //double revolutionsPerSecond = angularVelocityRadPerSec / (2 * Math.PI);
+
+        //return revolutionsPerSecond;
+    }
 
 	public void resetEncoders() {
 		

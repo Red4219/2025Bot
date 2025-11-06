@@ -115,7 +115,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private PhotonVision _photonVision = null;
 	private Limelight _limeLight = null;
 	private SwerveModuleState[] swerveModuleStatesRobotRelative;
-	private EstimatedRobotPose phoneEstimatedRobotPose;
+	private EstimatedRobotPose phoneEstimatedRobotPose1;
+	private EstimatedRobotPose phoneEstimatedRobotPose2;
 
 	private double driveP = ModuleConstants.kModuleDriveGains.kP;
 	private double driveI = ModuleConstants.kModuleDriveGains.kI;
@@ -424,7 +425,7 @@ public class DriveSubsystem extends SubsystemBase {
 		);
 
 		if(Constants.kEnablePhotonVision) {
-			_photonVision.setReferencePose(pose);
+			_photonVision.setReferencePose2d(pose);
 		}
 	}
 
@@ -572,33 +573,51 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if (Constants.kEnablePhotonVision) {
 
-			phoneEstimatedRobotPose = _photonVision.getPose(poseEstimator.getEstimatedPosition());
+			phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
 
-			if(phoneEstimatedRobotPose != null) {
+			if(phoneEstimatedRobotPose1 != null) {
 				if(Constants.kEnableDriveSubSystemLogger) {
-					Logger.recordOutput("PhotonVisionEstimator/Robot", phoneEstimatedRobotPose.estimatedPose.toPose2d());
+					Logger.recordOutput("PhotonVisionEstimator1/Robot", phoneEstimatedRobotPose1.estimatedPose.toPose2d());
 				}
 
 				poseEstimator.addVisionMeasurement(
-					phoneEstimatedRobotPose.estimatedPose.toPose2d(),
-					//Timer.getFPGATimestamp() - phoneEstimatedRobotPose.timestampSeconds,
-					phoneEstimatedRobotPose.timestampSeconds,
+					phoneEstimatedRobotPose1.estimatedPose.toPose2d(),
+					phoneEstimatedRobotPose1.timestampSeconds,
 					visionMeasurementStdDevs
 				);
 
 				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
-					// if we are not moving, reset the odometry to the location from the limelight
-					//resetOdometry(limelightMeasurement.pose.rotateBy(rotationOffset180));
+					// if we are not moving, reset the odometry
+					resetOdometry(phoneEstimatedRobotPose1.estimatedPose.toPose2d());
+				}
+			}
+
+			// Now check camera 2
+			phoneEstimatedRobotPose2 = _photonVision.getPose2(poseEstimator.getEstimatedPosition());
+
+			if(phoneEstimatedRobotPose2 != null) {
+				if(Constants.kEnableDriveSubSystemLogger) {
+					Logger.recordOutput("PhotonVisionEstimator2/Robot", phoneEstimatedRobotPose2.estimatedPose.toPose2d());
+				}
+
+				poseEstimator.addVisionMeasurement(
+					phoneEstimatedRobotPose2.estimatedPose.toPose2d(),
+					phoneEstimatedRobotPose2.timestampSeconds,
+					visionMeasurementStdDevs
+				);
+
+				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
+					// if we are not moving, reset the odometry
+					// if the photon estimate 1 is null, the reset with estimate 2
+					if(phoneEstimatedRobotPose1 == null) {
+						resetOdometry(phoneEstimatedRobotPose2.estimatedPose.toPose2d());
+					}
 					
-					// this should already be rotated above
-					resetOdometry(phoneEstimatedRobotPose.estimatedPose.toPose2d());
 				}
 			}
 		}
 
 		if (Constants.kEnableLimelight) {
-			//
-			//limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition().rotateBy(rotationOffset180));
 			limelightMeasurement = _limeLight.getPose2d(poseEstimator.getEstimatedPosition());
 			// System.out.println(limelightMeasurement.tagCount);
 			// Did we get a measurement?
@@ -613,7 +632,6 @@ public class DriveSubsystem extends SubsystemBase {
 				if(Constants.kEnableDriveSubSystemLogger) {
 					Logger.recordOutput("Limelight/Pose", limelightMeasurement.pose);
 				}
-
 
 				if(!gyro.isMoving() && Constants.kResetOdometryFromLimeLight) {
 					// if we are not moving, reset the odometry to the location from the limelight

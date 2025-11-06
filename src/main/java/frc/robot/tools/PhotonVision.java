@@ -36,9 +36,6 @@ public class PhotonVision {
 	private PhotonCamera _camera;
 	private PhotonCamera _camera2;
 	
-	
-	
-
 	// simulation variables
 	private VisionSystemSim _visionSystemSim = null;
 	private Pose3d _sim_farTargetPose = null;
@@ -46,8 +43,10 @@ public class PhotonVision {
 	private double _sim_targetHeight = 0.0;
 	private AprilTagFieldLayout _aprilTagFieldLayout = null;
 	private PhotonPoseEstimator _photonPoseEstimator = null;
+	private PhotonPoseEstimator _photonPoseEstimator2 = null;
 	private ShuffleboardTab photonVisionTab = null;
-	private EstimatedRobotPose _estimatedRobotPose = null;
+	private EstimatedRobotPose _estimatedRobotPose1 = null;
+	private EstimatedRobotPose _estimatedRobotPose2 = null;
 	//private int[] _targetsUsed = new int[0];
 	//private int _speakerTarget = 0;
 	//PhotonPipelineResult result = null;
@@ -55,7 +54,8 @@ public class PhotonVision {
 	private Pose2d prevEstimatedRobotPose = null;
 	//private Pose2d prevPhotonEstimatedPose = null;
 	List<Pose3d> allTagPoses = new ArrayList<>();
-	private Optional<EstimatedRobotPose> estimatedRobotPose = null;
+	private Optional<EstimatedRobotPose> estimatedRobotPose1 = null;
+	private Optional<EstimatedRobotPose> estimatedRobotPose2 = null;
 
 	//private double[] poseArray = new double[3];
 
@@ -78,8 +78,13 @@ public class PhotonVision {
 				isSim = true;
 			}
 
-			_camera = new PhotonCamera(PhotonVisionConstants.CameraName);
-			_camera2 = new PhotonCamera(PhotonVisionConstants.Camera2Name);
+			if(Constants.PhotonVisionConstants.kEnableCamera1) {
+				_camera = new PhotonCamera(PhotonVisionConstants.CameraName);
+			}
+			
+			if(Constants.PhotonVisionConstants.kEnableCamera2) {
+				_camera2 = new PhotonCamera(PhotonVisionConstants.Camera2Name);
+			}
 
 			try {
 				// This sets up the field with the correct Apriltags in the proper places
@@ -115,35 +120,14 @@ public class PhotonVision {
 			// If the field layout is created and valid and the camera is created and connected
 			// create the photon pose estimator.  It is where photonvision thinks the robot is.
 			if (_aprilTagFieldLayout != null) {
-				if (_camera != null) {
-					if (_camera.isConnected()) {
-						_photonPoseEstimator = new PhotonPoseEstimator(_aprilTagFieldLayout, 
-							Constants.PhotonVisionConstants.poseStrategy, 
-							Constants.PhotonVisionConstants.cameraToRobot
-						);
-					} else {
-						System.out.println("PhotonVision::PhotonVision() - the camera is not connected");
-					}
-				} else {
-					System.out.println("PhotonVision::PhotonVision() - _camera is null");
-				}
-
-				if (_camera2 != null) {
-					if (_camera2.isConnected()) {
-						_photonPoseEstimator = new PhotonPoseEstimator(_aprilTagFieldLayout, 
-							Constants.PhotonVisionConstants.poseStrategy, 
-							Constants.PhotonVisionConstants.camera2ToRobot
-						);
-					} else {
-						System.out.println("PhotonVision::PhotonVision() - the camera is not connected");
-					}
-				} else {
-					System.out.println("PhotonVision::PhotonVision() - _camera is null");
-				}
+				createPhotonPoseEstimators();
 			}
 
 			// Create the elements in Shuffleboard for debugging if debugPhotonVision is true 
-			if (_camera.isConnected() && Constants.kDebugPhotonVision == true) {
+			if (Constants.PhotonVisionConstants.kEnableCamera1 
+				&& _camera.isConnected() 
+				&& Constants.kDebugPhotonVision == true) {
+
 				photonVisionTab = Shuffleboard.getTab("PhotonVision");
 
 				//photonVisionTab.addDouble("Target Distance", this::getTargetDistance);
@@ -152,7 +136,10 @@ public class PhotonVision {
 				//photonVisionTab.addString("Targets Used", this::targetsUsed);
 			}
 
-			if (_camera2.isConnected() && Constants.kDebugPhotonVision == true) {
+			if (Constants.PhotonVisionConstants.kEnableCamera2 
+				&& _camera2.isConnected() 
+				&& Constants.kDebugPhotonVision == true) {
+
 				photonVisionTab = Shuffleboard.getTab("PhotonVision");
 				photonVisionTab.addBoolean("Cam2", this::isConnected2);
 			
@@ -273,9 +260,9 @@ public class PhotonVision {
 		}
 	}
 
-	// Is the camera connected?
+	// Is the camera1 connected?
 	public boolean isConnected() {
-		if(Constants.kEnablePhotonVision) {
+		if(Constants.kEnablePhotonVision && Constants.PhotonVisionConstants.kEnableCamera1) {
 
 			if(_camera != null) {
 				return _camera.isConnected();
@@ -286,8 +273,10 @@ public class PhotonVision {
 			return false;
 		}
 	}
+
+	// Is the camera2 connected?
 	public boolean isConnected2() {
-		if(Constants.kEnablePhotonVision) {
+		if(Constants.kEnablePhotonVision && Constants.PhotonVisionConstants.kEnableCamera2) {
 
 			if(_camera2 != null) {
 				return _camera2.isConnected();
@@ -301,34 +290,34 @@ public class PhotonVision {
 
 
 	// Get the pose/location on the field that photonvision thinks the robot is at
-	public EstimatedRobotPose getPose(Pose2d prevEstimatedRobotPose) {
+	public EstimatedRobotPose getPose1(Pose2d prevEstimatedRobotPose) {
 
 		this.prevEstimatedRobotPose = prevEstimatedRobotPose;
 
-		//o = getPhotonPose(prevEstimatedRobotPose);
-		estimatedRobotPose = getPhotonPose(prevEstimatedRobotPose);
+		// Get the estimated robot pose
+		estimatedRobotPose1 = getPhotonPose1(prevEstimatedRobotPose);
 
 		if (isSim) {
 			// Update PhotonVision based on our new robot position.
 			_visionSystemSim.update(prevEstimatedRobotPose);
 		}
 
-		if (estimatedRobotPose.isPresent()) {
+		if (estimatedRobotPose1.isPresent()) {
 
 			// Clear out the tags and let it be filled in if necessary
 			allTagPoses.clear();
 
-			_estimatedRobotPose = estimatedRobotPose.get();
+			_estimatedRobotPose1 = estimatedRobotPose1.get();
 
 			if (Constants.kDebugPhotonVision) {
-				for (PhotonTrackedTarget target : _estimatedRobotPose.targetsUsed) {
+				for (PhotonTrackedTarget target : _estimatedRobotPose1.targetsUsed) {
 					allTagPoses.add(
 						_aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
 					);
 				}
 
 				Logger.recordOutput(
-			 		"PhotonVision/TargetsUsed",
+			 		"PhotonVision/TargetsUsed1",
 			 		allTagPoses.toArray(new Pose3d[allTagPoses.size()])
 				);
 			}
@@ -374,28 +363,84 @@ public class PhotonVision {
 
 			if (Constants.kDebugPhotonVision) {
 				Logger.recordOutput(
-					"PhotonVision/TargetsUsed",
+					"PhotonVision/TargetsUsed1",
 					allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
 
-				_estimatedRobotPose = null;
+				_estimatedRobotPose1 = null;
 			}
 		}
 
-		return _estimatedRobotPose;
+		return _estimatedRobotPose1;
+	}
+
+	public EstimatedRobotPose getPose2(Pose2d prevEstimatedRobotPose) {
+
+		this.prevEstimatedRobotPose = prevEstimatedRobotPose;
+
+		// Get the estimated robot pose
+		estimatedRobotPose2 = getPhotonPose2(prevEstimatedRobotPose);
+
+		if (isSim) {
+			// Update PhotonVision based on our new robot position.
+			_visionSystemSim.update(prevEstimatedRobotPose);
+		}
+
+		if (estimatedRobotPose2.isPresent()) {
+
+			// Clear out the tags and let it be filled in if necessary
+			allTagPoses.clear();
+
+			_estimatedRobotPose2 = estimatedRobotPose2.get();
+
+			if (Constants.kDebugPhotonVision) {
+				for (PhotonTrackedTarget target : _estimatedRobotPose2.targetsUsed) {
+					allTagPoses.add(
+						_aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
+					);
+				}
+
+				Logger.recordOutput(
+			 		"PhotonVision/TargetsUsed2",
+			 		allTagPoses.toArray(new Pose3d[allTagPoses.size()])
+				);
+			}
+
+		} else {
+			if (Constants.kDebugPhotonVision) {
+				Logger.recordOutput(
+					"PhotonVision/TargetsUsed2",
+					allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+
+				_estimatedRobotPose1 = null;
+			}
+		}
+
+		return _estimatedRobotPose2;
 	}
 
 	// Set the reference 2D (X,Y) pose/position for PhotonVision to use
-	public void setReferencePose(Pose2d referencePose) {
+	public void setReferencePose2d(Pose2d referencePose) {
 		
-		if(_photonPoseEstimator != null) {
+		// If camera1 is enabled and the estimator is not null
+		if(Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator != null) {
 			_photonPoseEstimator.setReferencePose(referencePose);
+		}
+
+		// If camera2 is enabled and the estimator is not null
+		if(Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator2 != null) {
+			_photonPoseEstimator2.setReferencePose(referencePose);
 		}
 	}
 
 	// Set the reference 3D (X,Y,Z) pose/position for PhotonVision to use
-	public void setReferencePose(Pose3d referencePose) {
-		if(_photonPoseEstimator != null) {
+	public void setReferencePose3d(Pose3d referencePose) {
+
+		if(Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator != null) {
 			_photonPoseEstimator.setReferencePose(referencePose);
+		}
+
+		if(Constants.PhotonVisionConstants.kEnableCamera2 && _photonPoseEstimator2 != null) {
+			_photonPoseEstimator2.setReferencePose(referencePose);
 		}
 	}
 
@@ -505,11 +550,11 @@ public class PhotonVision {
 
 	// Need to look this over
 	// This is a private method used only internally
-	private Optional<EstimatedRobotPose> getPhotonPose(Pose2d prevEstimatedRobotPose) {
+	private Optional<EstimatedRobotPose> getPhotonPose1(Pose2d prevEstimatedRobotPose) {
 
 		try {
 
-			if (_photonPoseEstimator != null) {
+			if (Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator != null) {
 
 				// Check if we are in simulation and the previousEstimatedRobotPose is not null
 				// and we are not connected to the camera
@@ -517,12 +562,11 @@ public class PhotonVision {
 				if (prevEstimatedRobotPose != null) {
 					_photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
 				} else {
-					System.out.println("PhotonVision::getPhotonPose() - prevEstimatedRobotPose is null");
+					System.out.println("PhotonVision::getPhotonPose1() - prevEstimatedRobotPose is null");
 					prevEstimatedRobotPose = new Pose2d();
 				}
 
-				estimatedRobotPose = _photonPoseEstimator.update(_camera.getLatestResult());
-				estimatedRobotPose = _photonPoseEstimator.update(_camera2.getLatestResult());
+				estimatedRobotPose1 = _photonPoseEstimator.update(_camera.getLatestResult());
 				
 
 				/*allTagPoses.clear();
@@ -562,22 +606,38 @@ public class PhotonVision {
 					return Optional.empty();
 				}*/
 
-				
-
-				return estimatedRobotPose;
+				return estimatedRobotPose1;
 			} else {
-				//System.out.println("getPhotonPose() - _photonPoseEstimator is null");
+				createPhotonPoseEstimators();
+			}
 
-				if (_camera != null) {
-					if (_camera.isConnected()) {
-						_photonPoseEstimator = new PhotonPoseEstimator(_aprilTagFieldLayout, 
-							Constants.PhotonVisionConstants.poseStrategy, 
-							Constants.PhotonVisionConstants.cameraToRobot
-						);
-					} else {
-						System.out.println("-------> the camera is not connected");
-					}
+			return Optional.empty();
+		} catch (Exception e) {
+			return Optional.empty();
+		}
+	}
+
+	private Optional<EstimatedRobotPose> getPhotonPose2(Pose2d prevEstimatedRobotPose) {
+
+		try {
+
+			if (Constants.PhotonVisionConstants.kEnableCamera2 && _photonPoseEstimator2 != null) {
+
+				// Check if we are in simulation and the previousEstimatedRobotPose is not null
+				// and we are not connected to the camera
+				// Change this for testing
+				if (prevEstimatedRobotPose != null) {
+					_photonPoseEstimator2.setReferencePose(prevEstimatedRobotPose);
+				} else {
+					System.out.println("PhotonVision::getPhotonPose2() - prevEstimatedRobotPose is null");
+					prevEstimatedRobotPose = new Pose2d();
 				}
+
+				estimatedRobotPose2 = _photonPoseEstimator2.update(_camera2.getLatestResult());				
+
+				return estimatedRobotPose2;
+			} else {
+				createPhotonPoseEstimators();
 			}
 
 			return Optional.empty();
@@ -609,9 +669,18 @@ public class PhotonVision {
 	private void setupSimulation(Pose3d aprilTagFieldLayoutOrigin) {
 
 		_visionSystemSim = new VisionSystemSim("main");
-		PhotonCameraSim cameraSim = new PhotonCameraSim(_camera);
-		cameraSim.enableDrawWireframe(true);
-		_visionSystemSim.addCamera(cameraSim, Constants.PhotonVisionConstants.cameraToRobot);
+
+		if(Constants.PhotonVisionConstants.kEnableCamera1) {
+			PhotonCameraSim cameraSim1 = new PhotonCameraSim(_camera);
+			cameraSim1.enableDrawWireframe(true);
+			_visionSystemSim.addCamera(cameraSim1, Constants.PhotonVisionConstants.cameraToRobot);
+		}
+
+		if(Constants.PhotonVisionConstants.kEnableCamera2) {
+			PhotonCameraSim cameraSim2 = new PhotonCameraSim(_camera2);
+			cameraSim2.enableDrawWireframe(true);
+			_visionSystemSim.addCamera(cameraSim2, Constants.PhotonVisionConstants.camera2ToRobot);
+		}
 			
 		
 		// See
@@ -635,6 +704,30 @@ public class PhotonVision {
                     new Rotation3d(0.0, 0.0, 0.0));		
 		
 		setupAprilTagFieldLayoutSim();
+	}
+
+	public void createPhotonPoseEstimators() {
+		if (_camera != null) {
+			if (_camera.isConnected()) {
+				_photonPoseEstimator = new PhotonPoseEstimator(_aprilTagFieldLayout, 
+					Constants.PhotonVisionConstants.poseStrategy, 
+					Constants.PhotonVisionConstants.cameraToRobot
+				);
+			} else {
+				System.out.println("PhotonVision::PhotonVision() - camera1 is not connected");
+			}
+		}
+
+		if (_camera2 != null) {
+			if (_camera2.isConnected()) {
+				_photonPoseEstimator2 = new PhotonPoseEstimator(_aprilTagFieldLayout, 
+					Constants.PhotonVisionConstants.poseStrategy, 
+					Constants.PhotonVisionConstants.camera2ToRobot
+				);
+			} else {
+				System.out.println("PhotonVision::PhotonVision() - camera2 is not connected");
+			}
+		}
 	}
 
 	/*public String targetsUsed() {

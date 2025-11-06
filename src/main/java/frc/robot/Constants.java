@@ -258,6 +258,8 @@ public final class Constants {
 
 		public static final String CameraName = "cam1";
 		public static final String Camera2Name = "cam2";
+		public static final boolean kEnableCamera1 = true;
+		public static final boolean kEnableCamera2 = true;
 
 
 		// Simulated Vision System.
