@@ -54,6 +54,7 @@ public class PhotonVision {
 	private Pose2d prevEstimatedRobotPose = null;
 	//private Pose2d prevPhotonEstimatedPose = null;
 	List<Pose3d> allTagPoses = new ArrayList<>();
+	List<Pose3d> allTagPoses2 = new ArrayList<>();
 	private Optional<EstimatedRobotPose> estimatedRobotPose1 = null;
 	private Optional<EstimatedRobotPose> estimatedRobotPose2 = null;
 
@@ -302,10 +303,9 @@ public class PhotonVision {
 			_visionSystemSim.update(prevEstimatedRobotPose);
 		}
 
-		if (estimatedRobotPose1.isPresent()) {
+		allTagPoses.clear();
 
-			// Clear out the tags and let it be filled in if necessary
-			allTagPoses.clear();
+		if (estimatedRobotPose1.isPresent()) {
 
 			_estimatedRobotPose1 = estimatedRobotPose1.get();
 
@@ -385,33 +385,34 @@ public class PhotonVision {
 			_visionSystemSim.update(prevEstimatedRobotPose);
 		}
 
-		if (estimatedRobotPose2.isPresent()) {
+		// Clear out the tags and let it be filled in if necessary
+		allTagPoses2.clear();
 
-			// Clear out the tags and let it be filled in if necessary
-			allTagPoses.clear();
+		if (estimatedRobotPose2.isPresent()) {
 
 			_estimatedRobotPose2 = estimatedRobotPose2.get();
 
 			if (Constants.kDebugPhotonVision) {
 				for (PhotonTrackedTarget target : _estimatedRobotPose2.targetsUsed) {
-					allTagPoses.add(
+					allTagPoses2.add(
 						_aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
 					);
 				}
 
 				Logger.recordOutput(
 			 		"PhotonVision/TargetsUsed2",
-			 		allTagPoses.toArray(new Pose3d[allTagPoses.size()])
+			 		allTagPoses2.toArray(new Pose3d[allTagPoses2.size()])
 				);
 			}
 
 		} else {
+
 			if (Constants.kDebugPhotonVision) {
 				Logger.recordOutput(
 					"PhotonVision/TargetsUsed2",
-					allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
+					allTagPoses2.toArray(new Pose3d[allTagPoses2.size()]));
 
-				_estimatedRobotPose1 = null;
+				_estimatedRobotPose2 = null;
 			}
 		}
 

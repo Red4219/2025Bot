@@ -252,7 +252,7 @@ public final class Constants {
 					new Rotation3d(
 						0,
 						PhotonVisionConstants.cam2Pitch,
-						180
+						Math.toRadians(180)
 					)
 				);
 
