@@ -271,7 +271,8 @@ public class SwerveModule {
 	public double getDistanceMeters() {
 		// return driveEncoder.getPosition();
 		//return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
+		return driveMotor.getPosition().getValueAsDouble();
+		//return (driveMotor.getRotorPosition().getValueAsDouble());
 	}
 
 	// Returns current position of the modules
@@ -286,7 +287,7 @@ public class SwerveModule {
 
 		m_moduleAngleRotation2d = Rotation2d.fromDegrees(cancoder.getAbsolutePosition(true).getValueAsDouble() * 360.0);
 
-		return new SwerveModulePosition(/*driveEncoder.getPosition()*/ getDistanceMeters(), m_moduleAngleRotation2d);
+		return new SwerveModulePosition(getDistanceMeters(), m_moduleAngleRotation2d);
 	}
 
 	// Sets the position of the swerve module
