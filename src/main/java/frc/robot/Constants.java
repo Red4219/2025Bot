@@ -40,7 +40,7 @@ public final class Constants {
 	public static boolean kResetOdometryFromPhotonVision = true;
 
 	// Limelight
-	public static boolean kEnableLimelight = true;
+	public static boolean kEnableLimelight = false;
 	public static boolean kDebugLimelight = true;
 	public static boolean kResetOdometryFromLimeLight = false;
 
