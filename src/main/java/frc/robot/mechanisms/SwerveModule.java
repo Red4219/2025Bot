@@ -329,8 +329,8 @@ public class SwerveModule {
 			//m_motorSimModel.setInputVoltage(velocityToRPS(desiredState.speedMetersPerSecond));
 			//m_motorSimModel.setAngularVelocity(desiredState.speedMetersPerSecond);
 			
-			//m_motorSimModel.setAngularVelocity(linearVelocityToRevolutionsPerSecond(desiredState.speedMetersPerSecond, .5));
-			m_motorSimModel.setAngularVelocity(100);
+			//m_motorSimModel.setAngularVelocity(metersPerSecondToRevolutionsPerSecond(desiredState.speedMetersPerSecond, 2));
+			m_motorSimModel.setAngularVelocity(desiredState.speedMetersPerSecond);
 
 			//m_motorSimModel.setInputVoltage(desiredState.speedMetersPerSecond);
 			m_motorSimModel.update(0.020); // assumeds 20 ms loop time
@@ -384,6 +384,17 @@ public class SwerveModule {
         //double revolutionsPerSecond = angularVelocityRadPerSec / (2 * Math.PI);
 
         //return revolutionsPerSecond;
+    }
+
+	public static double metersPerSecondToRevolutionsPerSecond(double metersPerSecond, double radius) {
+        if (radius <= 0) {
+            throw new IllegalArgumentException("Radius must be a positive value.");
+        }
+        // Circumference of the circle
+        double circumference = 2 * Math.PI * radius;
+
+        // Revolutions per second = (meters per second) / (circumference per revolution)
+        return metersPerSecond / circumference;
     }
 
 	public void resetEncoders() {

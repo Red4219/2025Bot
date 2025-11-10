@@ -571,6 +571,35 @@ public class DriveSubsystem extends SubsystemBase {
 		swervePosition[2] = rearLeft.getPosition();
 		swervePosition[3] = rearRight.getPosition();
 
+		if(isSim) {
+
+			odometry.update(
+				Rotation2d.fromDegrees(getHeading()),
+				swervePosition);
+
+			poseEstimator.update(
+				Rotation2d.fromDegrees(getHeading()),
+				swervePosition
+			);
+
+		} else {
+			odometry.update(
+				//gyro.getRotation2d().unaryMinus(),
+				gyro.getRotation2d(),
+				swervePosition
+			);
+
+			/*estimatedPose = poseEstimator.update(
+				gyro.getRotation2d().unaryMinus(),
+				swervePosition
+			);*/
+			poseEstimator.update(
+				//gyro.getRotation2d().unaryMinus(),
+				gyro.getRotation2d(),
+				swervePosition
+			);
+		}
+
 		if (Constants.kEnablePhotonVision) {
 
 			phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
@@ -648,34 +677,7 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 
 
-		if(isSim) {
-
-			odometry.update(
-				Rotation2d.fromDegrees(getHeading()),
-				swervePosition);
-
-			poseEstimator.update(
-				Rotation2d.fromDegrees(getHeading()),
-				swervePosition
-			);
-
-		} else {
-			odometry.update(
-				//gyro.getRotation2d().unaryMinus(),
-				gyro.getRotation2d(),
-				swervePosition
-			);
-
-			/*estimatedPose = poseEstimator.update(
-				gyro.getRotation2d().unaryMinus(),
-				swervePosition
-			);*/
-			poseEstimator.update(
-				//gyro.getRotation2d().unaryMinus(),
-				gyro.getRotation2d(),
-				swervePosition
-			);
-		}
+		
 
 		// Show the estimated position
 		//Logger.recordOutput("Estimator/Robot", poseEstimator.getEstimatedPosition());
