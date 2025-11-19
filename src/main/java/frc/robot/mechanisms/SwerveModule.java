@@ -48,6 +48,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.Orchestra;
@@ -183,7 +184,11 @@ public class SwerveModule {
 		driveMotor.getConfigurator().apply(slot0Configs);
 
 		FeedbackConfigs feedbackConfig = new FeedbackConfigs();
-		feedbackConfig.withRotorToSensorRatio(ModuleConstants.kdriveGearRatioL3); 
+		//ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference
+		//feedbackConfig.withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference);
+		feedbackConfig.withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 );
+		feedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+		//feedbackConfig.withRotorToSensorRatio(ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference); 
 		driveMotor.getConfigurator().apply(feedbackConfig);
 
 		// driveConfig = new SparkFlexConfig();
@@ -270,8 +275,8 @@ public class SwerveModule {
 
 	public double getDistanceMeters() {
 		// return driveEncoder.getPosition();
-		return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		//return driveMotor.getPosition().getValueAsDouble();
+		//return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
+		return driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kwheelCircumference;
 		//return (driveMotor.getRotorPosition().getValueAsDouble());
 	}
 
