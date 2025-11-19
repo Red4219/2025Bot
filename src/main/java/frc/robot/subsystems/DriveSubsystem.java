@@ -666,6 +666,12 @@ public class DriveSubsystem extends SubsystemBase {
 
 			vision1.periodic();
 			vision2.periodic();
+
+			if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
+				resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
+			} else if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
+				resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
+			}
 		}
 
 		if (Constants.kEnableLimelight) {

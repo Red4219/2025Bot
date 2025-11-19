@@ -64,6 +64,9 @@ import org.photonvision.EstimatedRobotPose;
      // Simulation
      private PhotonCameraSim cameraSim;
      private VisionSystemSim visionSim;
+
+     private EstimatedRobotPose estimatedRobotPose;
+     private boolean canSeeTag = false;
  
      /**
       * @param estConsumer Lamba that will accept a pose estimate and pass it to your desired {@link
@@ -135,7 +138,17 @@ import org.photonvision.EstimatedRobotPose;
                          Logger.recordOutput(
 								"PhotonVisionEstimator2/Robot",
 								est.estimatedPose.toPose2d());
+
+                        this.estimatedRobotPose = est;
+                        canSeeTag = true;
                      });
+            
+            
+            if(visionEst.isEmpty()) {
+                canSeeTag = false;
+            }
+
+                     
          }
      }
  
@@ -150,8 +163,7 @@ import org.photonvision.EstimatedRobotPose;
              Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
          if (estimatedPose.isEmpty()) {
              // No pose input. Default to single-tag std devs
-             curStdDevs = PhotonVisionConstants.kSingleTagStdDevs;
- 
+             curStdDevs = PhotonVisionConstants.kSingleTagStdDevs; 
          } else {
              // Pose present. Start running Heuristic
              var estStdDevs = PhotonVisionConstants.kSingleTagStdDevs;
@@ -219,4 +231,12 @@ import org.photonvision.EstimatedRobotPose;
      public static interface EstimateConsumer {
          public void accept(Pose2d pose, double timestamp, Matrix<N3, N1> estimationStdDevs);
      }
+
+    public boolean isVisionEstAvailable() {
+        return canSeeTag;
+    }
+
+    public EstimatedRobotPose getEstimatedRobotPose() {
+        return estimatedRobotPose;
+    }
  }
