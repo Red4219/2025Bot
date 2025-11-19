@@ -10,6 +10,7 @@ import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -42,6 +44,8 @@ import frc.robot.Constants;
 import frc.robot.mechanisms.SwerveModule;
 import frc.robot.tools.Limelight;
 import frc.robot.tools.PhotonVision;
+import frc.robot.tools.Vision1;
+import frc.robot.tools.Vision2;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -112,7 +116,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private SwerveDrivePoseEstimator poseEstimator = null;
 
-	private PhotonVision _photonVision = null;
+	//private PhotonVision _photonVision = null;
+	private Vision1 vision1 = null;
+	private Vision2 vision2 = null;
 	private Limelight _limeLight = null;
 	private SwerveModuleState[] swerveModuleStatesRobotRelative;
 	private EstimatedRobotPose phoneEstimatedRobotPose1;
@@ -175,11 +181,24 @@ public class DriveSubsystem extends SubsystemBase {
 
 	//private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
 
+	/** See {@link SwerveDrivePoseEstimator#addVisionMeasurement(Pose2d, double)}. */
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+    }
+
+    /** See {@link SwerveDrivePoseEstimator#addVisionMeasurement(Pose2d, double, Matrix)}. */
+    public void addVisionMeasurement(
+            Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
+    }
+
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
 
 		if(Constants.kEnablePhotonVision) {
-			_photonVision = RobotContainer.photonVision;
+			//_photonVision = RobotContainer.photonVision;
+			vision1 = new Vision1(this::addVisionMeasurement);
+			vision2 = new Vision2(this::addVisionMeasurement);
 		}
 
 		if(Constants.kEnableLimelight) {
@@ -424,9 +443,9 @@ public class DriveSubsystem extends SubsystemBase {
 			pose
 		);
 
-		if(Constants.kEnablePhotonVision) {
+		/*if(Constants.kEnablePhotonVision) {
 			_photonVision.setReferencePose2d(pose);
-		}
+		}*/
 	}
 
 	public void drive(double xSpeed, double ySpeed, double rot) {
@@ -602,7 +621,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if (Constants.kEnablePhotonVision) {
 
-			phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
+			/*phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
 
 			if(phoneEstimatedRobotPose1 != null) {
 				if(Constants.kEnableDriveSubSystemLogger) {
@@ -643,7 +662,10 @@ public class DriveSubsystem extends SubsystemBase {
 					}
 					
 				}
-			}
+			}*/
+
+			vision1.periodic();
+			vision2.periodic();
 		}
 
 		if (Constants.kEnableLimelight) {
@@ -894,7 +916,7 @@ public class DriveSubsystem extends SubsystemBase {
 		return trajectory.sample(trajectory.getTotalTimeSeconds());
 	}
 
-	public void goToPose(Constants.PoseDefinitions.kFieldPoses targetPose) {
+	/*public void goToPose(Constants.PoseDefinitions.kFieldPoses targetPose) {
 
 		//System.out.println("DriveSubsystem::goToPose() called");
 
@@ -973,5 +995,5 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public boolean isGotoPoseRunning() {
 		return gotoPoseRunning;
-	}
+	}*/
 }

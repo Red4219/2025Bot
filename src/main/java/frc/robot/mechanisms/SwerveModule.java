@@ -270,8 +270,8 @@ public class SwerveModule {
 
 	public double getDistanceMeters() {
 		// return driveEncoder.getPosition();
-		//return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		return driveMotor.getPosition().getValueAsDouble();
+		return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
+		//return driveMotor.getPosition().getValueAsDouble();
 		//return (driveMotor.getRotorPosition().getValueAsDouble());
 	}
 

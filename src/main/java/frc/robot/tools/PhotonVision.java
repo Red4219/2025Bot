@@ -16,10 +16,14 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -57,6 +61,7 @@ public class PhotonVision {
 	List<Pose3d> allTagPoses2 = new ArrayList<>();
 	private Optional<EstimatedRobotPose> estimatedRobotPose1 = null;
 	private Optional<EstimatedRobotPose> estimatedRobotPose2 = null;
+	private Matrix<N3, N1> curStdDevs;
 
 	//private double[] poseArray = new double[3];
 
@@ -636,6 +641,8 @@ public class PhotonVision {
 
 				estimatedRobotPose2 = _photonPoseEstimator2.update(_camera2.getLatestResult());				
 
+				
+
 				return estimatedRobotPose2;
 			} else {
 				createPhotonPoseEstimators();
@@ -710,7 +717,8 @@ public class PhotonVision {
 	public void createPhotonPoseEstimators() {
 		if (_camera != null) {
 			if (_camera.isConnected()) {
-				_photonPoseEstimator = new PhotonPoseEstimator(_aprilTagFieldLayout, 
+				_photonPoseEstimator = new PhotonPoseEstimator(
+					_aprilTagFieldLayout, 
 					Constants.PhotonVisionConstants.poseStrategy, 
 					Constants.PhotonVisionConstants.cameraToRobot
 				);
@@ -721,7 +729,8 @@ public class PhotonVision {
 
 		if (_camera2 != null) {
 			if (_camera2.isConnected()) {
-				_photonPoseEstimator2 = new PhotonPoseEstimator(_aprilTagFieldLayout, 
+				_photonPoseEstimator2 = new PhotonPoseEstimator(
+					_aprilTagFieldLayout, 
 					Constants.PhotonVisionConstants.poseStrategy, 
 					Constants.PhotonVisionConstants.camera2ToRobot
 				);
@@ -757,4 +766,53 @@ public class PhotonVision {
 	/*public double getSpeakerTarget() {
 		return _speakerTarget;
 	}*/
+
+	/**
+     * Calculates new standard deviations This algorithm is a heuristic that creates dynamic standard
+     * deviations based on number of tags, estimation strategy, and distance from the tags.
+     *
+     * @param estimatedPose The estimated pose to guess standard deviations for.
+     * @param targets All targets in this camera frame
+     */
+    private void updateEstimationStdDevs(
+            Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
+        if (estimatedPose.isEmpty()) {
+            // No pose input. Default to single-tag std devs
+            curStdDevs = Constants.PhotonVisionConstants.kSingleTagStdDevs;
+
+        } else {
+            // Pose present. Start running Heuristic
+            var estStdDevs = Constants.PhotonVisionConstants.kSingleTagStdDevs;
+            int numTags = 0;
+            double avgDist = 0;
+
+            // Precalculation - see how many tags we found, and calculate an average-distance metric
+            for (var tgt : targets) {
+                var tagPose = _photonPoseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
+                if (tagPose.isEmpty()) continue;
+                numTags++;
+                avgDist +=
+                        tagPose
+                                .get()
+                                .toPose2d()
+                                .getTranslation()
+                                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+            }
+
+            if (numTags == 0) {
+                // No tags visible. Default to single-tag std devs
+                curStdDevs = Constants.PhotonVisionConstants.kSingleTagStdDevs;
+            } else {
+                // One or more tags visible, run the full heuristic.
+                avgDist /= numTags;
+                // Decrease std devs if multiple targets are visible
+                if (numTags > 1) estStdDevs = Constants.PhotonVisionConstants.kMultiTagStdDevs;
+                // Increase std devs based on (average) distance
+                if (numTags == 1 && avgDist > 4)
+                    estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+                else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+                curStdDevs = estStdDevs;
+            }
+        }
+    }
 }
