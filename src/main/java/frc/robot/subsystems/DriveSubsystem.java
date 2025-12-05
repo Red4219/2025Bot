@@ -44,8 +44,10 @@ import frc.robot.Constants;
 import frc.robot.mechanisms.SwerveModule;
 import frc.robot.tools.Limelight;
 import frc.robot.tools.PhotonVision;
+import frc.robot.tools.Vision;
 import frc.robot.tools.Vision1;
 import frc.robot.tools.Vision2;
+import frc.robot.tools.Vision.CameraEnum;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -117,12 +119,14 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveDrivePoseEstimator poseEstimator = null;
 
 	//private PhotonVision _photonVision = null;
-	private Vision1 vision1 = null;
-	private Vision2 vision2 = null;
+	//private Vision1 vision1 = null;
+	private Vision vision1 = null;
+	//private Vision2 vision2 = null;
+	private Vision vision2 = null;
 	private Limelight _limeLight = null;
 	private SwerveModuleState[] swerveModuleStatesRobotRelative;
-	private EstimatedRobotPose phoneEstimatedRobotPose1;
-	private EstimatedRobotPose phoneEstimatedRobotPose2;
+	//private EstimatedRobotPose phoneEstimatedRobotPose1;
+	//private EstimatedRobotPose phoneEstimatedRobotPose2;
 
 	private double driveP = ModuleConstants.kModuleDriveGains.kP;
 	private double driveI = ModuleConstants.kModuleDriveGains.kI;
@@ -197,8 +201,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if(Constants.kEnablePhotonVision) {
 			//_photonVision = RobotContainer.photonVision;
-			vision1 = new Vision1(this::addVisionMeasurement);
-			vision2 = new Vision2(this::addVisionMeasurement);
+			vision1 = new Vision(this::addVisionMeasurement, CameraEnum.Camera1);
+			vision2 = new Vision(this::addVisionMeasurement, CameraEnum.Camera2);
 		}
 
 		if(Constants.kEnableLimelight) {
