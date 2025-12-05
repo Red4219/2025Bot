@@ -183,13 +183,15 @@ public class SwerveModule {
 		slot0Configs.kD = drivePID.kD; // no output for error derivative
 		driveMotor.getConfigurator().apply(slot0Configs);
 
-		FeedbackConfigs feedbackConfig = new FeedbackConfigs();
+		// FeedbackConfigs feedbackConfig = new FeedbackConfigs();
 		//ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference
 		//feedbackConfig.withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference);
-		feedbackConfig.withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 );
-		feedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
-		//feedbackConfig.withRotorToSensorRatio(ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference); 
-		driveMotor.getConfigurator().apply(feedbackConfig);
+		// feedbackConfig.withSensorToMechanismRatio(ModuleConstants.kdriveGearRatioL3 );
+		// feedbackConfig.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+		// //feedbackConfig.withRotorToSensorRatio(ModuleConstants.kdriveGearRatioL3 * ModuleConstants.kwheelCircumference); 
+		// 
+		// feedbackConfig.withRotorToSensorRatio(ModuleConstants.kdriveGearRatioL3); 
+		// driveMotor.getConfigurator().apply(feedbackConfig);
 
 		// driveConfig = new SparkFlexConfig();
 
@@ -275,8 +277,8 @@ public class SwerveModule {
 
 	public double getDistanceMeters() {
 		// return driveEncoder.getPosition();
-		//return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
-		return driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kwheelCircumference;
+		return (driveMotor.getRotorPosition().getValueAsDouble()*ModuleConstants.kdriveGearRatioL3*ModuleConstants.kwheelCircumference);
+		//return driveMotor.getPosition().getValueAsDouble();
 		//return (driveMotor.getRotorPosition().getValueAsDouble());
 	}
 

@@ -48,7 +48,7 @@
   "folder": "Offseason",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -90.0
+    "rotation": -68.875
   },
   "useDefaultConstraints": false
 }

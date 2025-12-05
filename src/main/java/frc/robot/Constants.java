@@ -76,8 +76,8 @@ public final class Constants {
 		// Constants set for the _SDS MK4i_ and MK4
 		//public static final double kdriveGearRatioL1 = 1d / 8.14;
 		//public static final double kdriveGearRatioL2 = 1d / 6.75;
-		public static final double kdriveGearRatioL3 = 1d / 6.12;
-		//public static final double kdriveGearRatioL3 = 1d / 5.7;
+		// public static final double kdriveGearRatioL3 = 1d / 6.12;
+		public static final double kdriveGearRatioL3 = 1d / 5.7;
 		//public static final double kdriveGearRatioL4 = 1d / 5.14;
 		public static final double kturnGearRatio = 1d / (150d / 7d);
 
@@ -187,7 +187,7 @@ public final class Constants {
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(8.5, 0, 0);
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(5.0, 0, 0);
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(6.5, 0, 0); // best one
-			public static final PIDConstants kPPDriveConstants = new PIDConstants(7.5, 0, 0);
+			public static final PIDConstants kPPDriveConstants = new PIDConstants(0.01, 0, 0);
 			//public static final PIDConstants kPPTurnConstants = new PIDConstants(3.5, 0, 0);
 			//public static final PIDConstants kPPTurnConstants = new PIDConstants(5.0, 0, 0);
 			public static final PIDConstants kPPTurnConstants = new PIDConstants(3.5, 0, 0);
@@ -232,8 +232,8 @@ public final class Constants {
 		public static double camX = Units.inchesToMeters(0);
 		public static double cam2X = Units.inchesToMeters(0);
 		// the front to back position of the camera relative to the robot center
-		public static double camY = Units.inchesToMeters(0);
-		public static double cam2Y = Units.inchesToMeters(0);
+		public static double camY = Units.inchesToMeters(10);
+		public static double cam2Y = Units.inchesToMeters(-10);
 
 		public static Transform3d cameraToRobot = new Transform3d(
                     new Translation3d(
