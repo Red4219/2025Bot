@@ -120,7 +120,12 @@ import org.photonvision.EstimatedRobotPose;
              // targets.
              cameraSim = new PhotonCameraSim(camera, cameraProp);
              // Add the simulated camera to view the targets on this simulated field.
-             visionSim.addCamera(cameraSim, PhotonVisionConstants.cameraToRobot);
+
+             if(cameraEnum == CameraEnum.Camera1) {
+                visionSim.addCamera(cameraSim, PhotonVisionConstants.cameraToRobot);
+             } else {
+                visionSim.addCamera(cameraSim, PhotonVisionConstants.camera2ToRobot);
+             }
  
              cameraSim.enableDrawWireframe(true);
          }
