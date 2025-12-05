@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.386940975639764,
-        "y": 2.1414555241141735
+        "y": 2.141455524114173
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -59.99999999999999
   },
   "reversed": false,
   "folder": "Offseason",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -68.875
+    "rotation": -90.0
   },
   "useDefaultConstraints": false
 }
