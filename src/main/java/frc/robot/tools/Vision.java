@@ -80,6 +80,14 @@ import org.photonvision.EstimatedRobotPose;
          this.estConsumer = estConsumer;
          this.cameraEnum = cameraEnum;
          String cameraName = "";
+        
+        try {
+            aprilTagFieldLayout = AprilTagFieldLayout
+						.loadFromResource(AprilTagFields.k2025ReefscapeAndyMark
+						.m_resourceFile);
+         } catch (IOException e) {
+            System.out.println(e.toString());
+         }
 
          if(cameraEnum == CameraEnum.Camera1) {
             cameraName = PhotonVisionConstants.CameraName;
@@ -93,13 +101,7 @@ import org.photonvision.EstimatedRobotPose;
 
          camera = new PhotonCamera(PhotonVisionConstants.CameraName);
 
-         try {
-            aprilTagFieldLayout = AprilTagFieldLayout
-						.loadFromResource(AprilTagFields.k2025ReefscapeAndyMark
-						.m_resourceFile);
-         } catch (IOException e) {
-            System.out.println(e.toString());
-         }
+         
  
          photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
  

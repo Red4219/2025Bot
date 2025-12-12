@@ -118,15 +118,15 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private SwerveDrivePoseEstimator poseEstimator = null;
 
-	//private PhotonVision _photonVision = null;
+	private PhotonVision _photonVision = null;
 	//private Vision1 vision1 = null;
-	private Vision vision1 = null;
+	private Vision1 vision1 = null;
 	//private Vision2 vision2 = null;
-	private Vision vision2 = null;
+	private Vision2 vision2 = null;
 	private Limelight _limeLight = null;
 	private SwerveModuleState[] swerveModuleStatesRobotRelative;
-	//private EstimatedRobotPose phoneEstimatedRobotPose1;
-	//private EstimatedRobotPose phoneEstimatedRobotPose2;
+	private EstimatedRobotPose phoneEstimatedRobotPose1;
+	private EstimatedRobotPose phoneEstimatedRobotPose2;
 
 	private double driveP = ModuleConstants.kModuleDriveGains.kP;
 	private double driveI = ModuleConstants.kModuleDriveGains.kI;
@@ -200,9 +200,11 @@ public class DriveSubsystem extends SubsystemBase {
 	public DriveSubsystem() {
 
 		if(Constants.kEnablePhotonVision) {
-			//_photonVision = RobotContainer.photonVision;
-			vision1 = new Vision(this::addVisionMeasurement, CameraEnum.Camera1);
-			vision2 = new Vision(this::addVisionMeasurement, CameraEnum.Camera2);
+			_photonVision = RobotContainer.photonVision;
+			// vision1 = new Vision(this::addVisionMeasurement, CameraEnum.Camera1);
+			// vision2 = new Vision(this::addVisionMeasurement, CameraEnum.Camera2);
+			// vision1 = new Vision1(this::addVisionMeasurement);
+			// vision2 = new Vision2(this::addVisionMeasurement);
 		}
 
 		if(Constants.kEnableLimelight) {
@@ -447,9 +449,9 @@ public class DriveSubsystem extends SubsystemBase {
 			pose
 		);
 
-		/*if(Constants.kEnablePhotonVision) {
+		if(Constants.kEnablePhotonVision) {
 			_photonVision.setReferencePose2d(pose);
-		}*/
+		}
 	}
 
 	public void drive(double xSpeed, double ySpeed, double rot) {
@@ -625,7 +627,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if (Constants.kEnablePhotonVision) {
 
-			/*phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
+			phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
 
 			if(phoneEstimatedRobotPose1 != null) {
 				if(Constants.kEnableDriveSubSystemLogger) {
@@ -666,16 +668,16 @@ public class DriveSubsystem extends SubsystemBase {
 					}
 					
 				}
-			}*/
-
-			vision1.periodic();
-			vision2.periodic();
-
-			if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
-				resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
-			} else if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
-				resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
 			}
+
+			// vision1.periodic();
+			// vision2.periodic();
+
+			// if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
+			// 	resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
+			// } else if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
+			// 	resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
+			// }
 		}
 
 		if (Constants.kEnableLimelight) {

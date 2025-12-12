@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.973,
-        "y": 0.672
+        "x": 5.41844262295082,
+        "y": 0.614
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.694029514535002,
-        "y": 1.252824825980325
+        "x": 5.42730737704918,
+        "y": 1.1918463114754092
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.108079939714567,
-        "y": 2.671
+        "x": 5.41844262295082,
+        "y": 2.8082479508196716
       },
       "prevControl": {
-        "x": 5.386940975639764,
-        "y": 2.141455524114173
+        "x": 5.442418032786884,
+        "y": 2.2927766393442615
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -88.84654954889467
   },
   "reversed": false,
   "folder": "Offseason",

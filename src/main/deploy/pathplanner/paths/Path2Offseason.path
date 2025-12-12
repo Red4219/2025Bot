@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.108,
-        "y": 2.671
+        "x": 5.41844262295082,
+        "y": 2.808
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.221628045029527,
-        "y": 2.3140837844488185
+        "x": 5.454405737704918,
+        "y": 2.4363811475409833
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Path2Offseason"
     },
     {
       "anchor": {
-        "x": 5.973,
-        "y": 0.672
+        "x": 5.41844262295082,
+        "y": 0.638
       },
       "prevControl": {
-        "x": 6.0546230334733675,
-        "y": 0.4357000202991852
+        "x": 5.41844262295082,
+        "y": 0.94991077546253
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -88.84654954889467
   },
   "reversed": false,
   "folder": "Offseason",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -88.84654954889467
   },
   "useDefaultConstraints": false
 }

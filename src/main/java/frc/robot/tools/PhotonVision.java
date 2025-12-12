@@ -433,7 +433,7 @@ public class PhotonVision {
 		}
 
 		// If camera2 is enabled and the estimator is not null
-		if(Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator2 != null) {
+		if(Constants.PhotonVisionConstants.kEnableCamera2 && _photonPoseEstimator2 != null) {
 			_photonPoseEstimator2.setReferencePose(referencePose);
 		}
 	}
