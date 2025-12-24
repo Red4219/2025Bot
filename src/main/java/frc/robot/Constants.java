@@ -42,23 +42,26 @@ public final class Constants {
 	public static boolean kEnablePhotonVision = true;
 	public static boolean kDebugPhotonVision = true;
 	public static boolean kResetOdometryFromPhotonVision = true;
+	public static boolean kEnablePhotonVisionCamera1 = true;
+	public static boolean kEnablePhotonVisionCamera2 = true;
+	public static boolean kUseNewPhotonVisionSystem = true;
 
 	// Limelight
-	public static boolean kEnableLimelight = false;
-	public static boolean kDebugLimelight = true;
+	public static boolean kEnableLimelight = true;
+	public static boolean kDebugLimelight = false;
 	public static boolean kResetOdometryFromLimeLight = false;
 
 	// Arm
-	public static boolean kEnableArm = true;
-	public static boolean kEnableDebugArm = true;
+	public static boolean kEnableArm = false;
+	public static boolean kEnableDebugArm = false;
 
 	// Elevator
 	public static boolean kEnableElevator = false;
-	public static boolean kEnableDebugElevator = true;
+	public static boolean kEnableDebugElevator = false;
 
 	// End Effector
-	public static boolean kEnableEndEffector = true;
-	public static boolean kEnableDebugEndEffector = true;
+	public static boolean kEnableEndEffector = false;
+	public static boolean kEnableDebugEndEffector = false;
 
 	public static final String kRioCANBusName = "rio";
 	public static final String kCanivoreCANBusName = "canivore";
@@ -78,15 +81,18 @@ public final class Constants {
 		//public static final double kdriveGearRatioL2 = 1d / 6.75;
 		// public static final double kdriveGearRatioL3 = 1d / 6.12;
 		public static final double kdriveGearRatioL3 = 1d / 5.36;
+		//public static final double kdriveGearRatioL3 = 5.36 / 1.0;
 		// public static final double kdriveGearRatioL3 = 1d / 5.7;
 		//public static final double kdriveGearRatioL4 = 1d / 5.14;
 		public static final double kturnGearRatio = 1d / (150d / 7d);
 
 		public static final double kwheelCircumference = Units.inchesToMeters(4) * Math.PI;
+		//public static final double kwheelCircumference = 2 * Math.PI * Units.inchesToMeters(2);
 
 		// The max speed the modules are capable of
 		//public static final double kMaxModuleSpeedMetersPerSecond = Units.feetToMeters(16.5);
-		public static final double kMaxModuleSpeedMetersPerSecond = 17.1;
+		//public static final double kMaxModuleSpeedMetersPerSecond = 17.1;
+		public static final double kMaxModuleSpeedMetersPerSecond = 20.0;
 
 		//public static final double ksVolts = .1;
 		//public static final double kDriveFeedForward = .2;
@@ -188,7 +194,7 @@ public final class Constants {
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(8.5, 0, 0);
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(5.0, 0, 0);
 			//public static final PIDConstants kPPDriveConstants = new PIDConstants(6.5, 0, 0); // best one
-			public static final PIDConstants kPPDriveConstants = new PIDConstants(7.5, 0, 0);
+			public static final PIDConstants kPPDriveConstants = new PIDConstants(50.0, 0.0, 0);
 			//public static final PIDConstants kPPTurnConstants = new PIDConstants(3.5, 0, 0);
 			//public static final PIDConstants kPPTurnConstants = new PIDConstants(5.0, 0, 0);
 			public static final PIDConstants kPPTurnConstants = new PIDConstants(3.5, 0, 0);
@@ -230,11 +236,11 @@ public final class Constants {
 		public static double camHeightOffGround = Units.inchesToMeters(40.0);
 		public static double cam2HeightOffGround = Units.inchesToMeters(40.0);
 		// the side to side position of the camera relative to the robot center
-		public static double camX = Units.inchesToMeters(4);
-		public static double cam2X = Units.inchesToMeters(8);
+		public static double camX = Units.inchesToMeters(0);
+		public static double cam2X = Units.inchesToMeters(0);
 		// the front to back position of the camera relative to the robot center
-		public static double camY = Units.inchesToMeters(9);
-		public static double cam2Y = Units.inchesToMeters(-25);
+		public static double camY = Units.inchesToMeters(-7.5);
+		public static double cam2Y = Units.inchesToMeters(-7.5);
 
 		public static Transform3d cameraToRobot = new Transform3d(
                     new Translation3d(

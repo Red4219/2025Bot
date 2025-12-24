@@ -522,6 +522,17 @@ public class PhotonVision {
 		return 0.0;
 	}
 
+	public boolean cameraCanSeeTarget(int cameraNumber) {
+		switch (cameraNumber) {
+			case 1:
+				return !_camera.getAllUnreadResults().isEmpty();
+			case 2:
+				return !_camera2.getAllUnreadResults().isEmpty();
+		}
+
+		return false;
+	}
+
 	// Can photon vision see the specified target?
 	public boolean canSeeTarget(int targetNumber) {
 
@@ -536,7 +547,7 @@ public class PhotonVision {
 		// if we get here, we can see some targets, just might not be the correct one
 
 		List<PhotonTrackedTarget> targets = result.getTargets();
-		List<PhotonTrackedTarget> targets2 = result.getTargets();
+		List<PhotonTrackedTarget> targets2 = result2.getTargets();
 
 		for(PhotonTrackedTarget target: targets) {
 			if(target.getFiducialId() == targetNumber) {

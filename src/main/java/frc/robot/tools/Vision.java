@@ -32,14 +32,17 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
  import edu.wpi.first.math.VecBuilder;
  import edu.wpi.first.math.geometry.Pose2d;
- import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
  import edu.wpi.first.math.numbers.N1;
  import edu.wpi.first.math.numbers.N3;
  import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.Constants;
 import frc.robot.Constants.PhotonVisionConstants;
 import frc.robot.Robot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
  import java.util.Optional;
 
@@ -71,6 +74,7 @@ import org.photonvision.EstimatedRobotPose;
      public enum CameraEnum { Camera1, Camera2 }
 
      private CameraEnum cameraEnum;
+    List<Pose3d> allTagPoses = new ArrayList<>();
  
      /**
       * @param estConsumer Lamba that will accept a pose estimate and pass it to your desired {@link
@@ -99,7 +103,13 @@ import org.photonvision.EstimatedRobotPose;
                  new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PhotonVisionConstants.camera2ToRobot);
          }
 
-         camera = new PhotonCamera(PhotonVisionConstants.CameraName);
+
+         //camera = new PhotonCamera(PhotonVisionConstants.CameraName);
+         if(cameraEnum == CameraEnum.Camera1) {
+            camera = new PhotonCamera("cam1");
+         } else {
+            camera = new PhotonCamera("cam2");
+         }
 
          
  
@@ -134,6 +144,7 @@ import org.photonvision.EstimatedRobotPose;
      }
  
      public void periodic() {
+        allTagPoses.clear();
          Optional<EstimatedRobotPose> visionEst = Optional.empty();
          for (var change : camera.getAllUnreadResults()) {
              visionEst = photonEstimator.update(change);
@@ -151,7 +162,7 @@ import org.photonvision.EstimatedRobotPose;
              }
  
              visionEst.ifPresent(
-                     est -> {
+                    est -> {
                          // Change our trust in the measurement based on the tags we can see
                          var estStdDevs = getEstimationStdDevs();
  
@@ -161,7 +172,7 @@ import org.photonvision.EstimatedRobotPose;
                             Logger.recordOutput(
 								"PhotonVisionEstimator1/Robot",
 								est.estimatedPose.toPose2d());
-                         } else if(cameraEnum == CameraEnum.Camera1) {
+                         } else if(cameraEnum == CameraEnum.Camera2) {
                             Logger.recordOutput(
 								"PhotonVisionEstimator2/Robot",
 								est.estimatedPose.toPose2d());
@@ -169,12 +180,50 @@ import org.photonvision.EstimatedRobotPose;
                         
                         this.estimatedRobotPose = est;
                         canSeeTag = true;
-                     });
+
+                        if (Constants.kDebugPhotonVision) {
+
+			        	    for (PhotonTrackedTarget target : est.targetsUsed) {
+					            allTagPoses.add(
+						            aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
+					            );
+				            }
+
+                            if(cameraEnum == CameraEnum.Camera1) {
+                                Logger.recordOutput(
+			 		            "PhotonVision/TargetsUsed1",
+			 		                allTagPoses.toArray(new Pose3d[allTagPoses.size()])
+				                );
+                            } else {
+                                Logger.recordOutput(
+                                    "PhotonVision/TargetsUsed2",
+                                    allTagPoses.toArray(new Pose3d[allTagPoses.size()])
+                                );
+                            }
+				            
+			            }
+
+                    }
+                );
 
             if(visionEst.isEmpty()) {
                 canSeeTag = false;
+                if (Constants.kDebugPhotonVision) {
+                    if(cameraEnum == CameraEnum.Camera1) {
+                        Logger.recordOutput(
+                        "PhotonVision/TargetsUsed1",
+                            new Pose3d[0]
+                        );
+                    } else {
+                        Logger.recordOutput(
+                            "PhotonVision/TargetsUsed2",
+                            new Pose3d[0]
+                        );
+                    }
+                }
             }
          }
+
      }
  
      /**

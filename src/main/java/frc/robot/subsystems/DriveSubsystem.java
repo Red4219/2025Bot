@@ -45,8 +45,6 @@ import frc.robot.mechanisms.SwerveModule;
 import frc.robot.tools.Limelight;
 import frc.robot.tools.PhotonVision;
 import frc.robot.tools.Vision;
-import frc.robot.tools.Vision1;
-import frc.robot.tools.Vision2;
 import frc.robot.tools.Vision.CameraEnum;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -119,10 +117,10 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveDrivePoseEstimator poseEstimator = null;
 
 	private PhotonVision _photonVision = null;
-	//private Vision1 vision1 = null;
-	private Vision1 vision1 = null;
-	//private Vision2 vision2 = null;
-	private Vision2 vision2 = null;
+
+	private Vision vision1 = null;
+	private Vision vision2 = null;
+
 	private Limelight _limeLight = null;
 	private SwerveModuleState[] swerveModuleStatesRobotRelative;
 	private EstimatedRobotPose phoneEstimatedRobotPose1;
@@ -135,12 +133,6 @@ public class DriveSubsystem extends SubsystemBase {
 	private double turnP = ModuleConstants.kModuleTurningGains.kP;
 	private double turnI = ModuleConstants.kModuleTurningGains.kI;
 	private double turnD = ModuleConstants.kModuleTurningGains.kD;
-
-	//private Rotation2d rotationOffset180 = new Rotation2d(0);
-
-	/*private double autoDriveP = AutoConstants.PathPLannerConstants.kPPDriveConstants.kP;
-	private double autoDriveI = AutoConstants.PathPLannerConstants.kPPDriveConstants.kI;
-	private double autoDriveD = AutoConstants.PathPLannerConstants.kPPDriveConstants.kD;*/
 
 	private Trajectory trajectory = null;
 	//private Trajectory.State goal = null;
@@ -200,11 +192,17 @@ public class DriveSubsystem extends SubsystemBase {
 	public DriveSubsystem() {
 
 		if(Constants.kEnablePhotonVision) {
-			_photonVision = RobotContainer.photonVision;
-			// vision1 = new Vision(this::addVisionMeasurement, CameraEnum.Camera1);
-			// vision2 = new Vision(this::addVisionMeasurement, CameraEnum.Camera2);
-			// vision1 = new Vision1(this::addVisionMeasurement);
-			// vision2 = new Vision2(this::addVisionMeasurement);
+			if(Constants.kUseNewPhotonVisionSystem == false) {
+				_photonVision = RobotContainer.photonVision;
+			} else {
+				if(Constants.kEnablePhotonVisionCamera1) {
+					vision1 = new Vision(this::addVisionMeasurement, CameraEnum.Camera1);
+				}
+
+				if(Constants.kEnablePhotonVisionCamera2) {
+					vision2 = new Vision(this::addVisionMeasurement, CameraEnum.Camera2);
+				}
+			}
 		}
 
 		if(Constants.kEnableLimelight) {
@@ -449,7 +447,7 @@ public class DriveSubsystem extends SubsystemBase {
 			pose
 		);
 
-		if(Constants.kEnablePhotonVision) {
+		if(Constants.kEnablePhotonVision && Constants.kUseNewPhotonVisionSystem == false) {
 			_photonVision.setReferencePose2d(pose);
 		}
 	}
@@ -627,57 +625,71 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if (Constants.kEnablePhotonVision) {
 
-			phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
+			if (Constants.kUseNewPhotonVisionSystem == false) {
 
-			if(phoneEstimatedRobotPose1 != null) {
-				if(Constants.kEnableDriveSubSystemLogger) {
-					Logger.recordOutput("PhotonVisionEstimator1/Robot", phoneEstimatedRobotPose1.estimatedPose.toPose2d());
-				}
+				phoneEstimatedRobotPose1 = _photonVision.getPose1(poseEstimator.getEstimatedPosition());
 
-				poseEstimator.addVisionMeasurement(
-					phoneEstimatedRobotPose1.estimatedPose.toPose2d(),
-					phoneEstimatedRobotPose1.timestampSeconds,
-					visionMeasurementStdDevs
-				);
-
-				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
-					// if we are not moving, reset the odometry
-					resetOdometry(phoneEstimatedRobotPose1.estimatedPose.toPose2d());
-				}
-			}
-
-			// Now check camera 2
-			phoneEstimatedRobotPose2 = _photonVision.getPose2(poseEstimator.getEstimatedPosition());
-
-			if(phoneEstimatedRobotPose2 != null) {
-				if(Constants.kEnableDriveSubSystemLogger) {
-					Logger.recordOutput("PhotonVisionEstimator2/Robot", phoneEstimatedRobotPose2.estimatedPose.toPose2d());
-				}
-
-				poseEstimator.addVisionMeasurement(
-					phoneEstimatedRobotPose2.estimatedPose.toPose2d(),
-					phoneEstimatedRobotPose2.timestampSeconds,
-					visionMeasurementStdDevs
-				);
-
-				if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
-					// if we are not moving, reset the odometry
-					// if the photon estimate 1 is null, the reset with estimate 2
-					if(phoneEstimatedRobotPose1 == null) {
-						resetOdometry(phoneEstimatedRobotPose2.estimatedPose.toPose2d());
+				if (phoneEstimatedRobotPose1 != null) {
+					if (Constants.kEnableDriveSubSystemLogger) {
+						Logger.recordOutput("PhotonVisionEstimator1/Robot",
+								phoneEstimatedRobotPose1.estimatedPose.toPose2d());
 					}
-					
+
+					if (_photonVision.cameraCanSeeTarget(1)) {
+						poseEstimator.addVisionMeasurement(
+								phoneEstimatedRobotPose1.estimatedPose.toPose2d(),
+								phoneEstimatedRobotPose1.timestampSeconds,
+								visionMeasurementStdDevs);
+
+						if (!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
+							// if we are not moving, reset the odometry
+							resetOdometry(phoneEstimatedRobotPose1.estimatedPose.toPose2d());
+						}
+					}
+				}
+
+				// Now check camera 2
+				phoneEstimatedRobotPose2 = _photonVision.getPose2(poseEstimator.getEstimatedPosition());
+
+				if (phoneEstimatedRobotPose2 != null) {
+					if (Constants.kEnableDriveSubSystemLogger) {
+						Logger.recordOutput("PhotonVisionEstimator2/Robot",
+								phoneEstimatedRobotPose2.estimatedPose.toPose2d());
+					}
+
+					if (_photonVision.cameraCanSeeTarget(2)) {
+						poseEstimator.addVisionMeasurement(
+								phoneEstimatedRobotPose2.estimatedPose.toPose2d(),
+								phoneEstimatedRobotPose2.timestampSeconds,
+								visionMeasurementStdDevs);
+
+						if (!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim) {
+							// if we are not moving, reset the odometry
+							// if the photon estimate 1 is null, the reset with estimate 2
+							if (phoneEstimatedRobotPose1 == null) {
+								resetOdometry(phoneEstimatedRobotPose2.estimatedPose.toPose2d());
+							}
+
+						}
+					}
+				}
+			} else {
+
+				if(Constants.kEnablePhotonVisionCamera1) {
+					vision1.periodic();
+				}
+				
+				if(Constants.kEnablePhotonVisionCamera2) {
+					vision2.periodic();
+				}
+
+
+				if(!gyro.isMoving() && Constants.kEnablePhotonVisionCamera1 && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
+					resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
+				} else if(!gyro.isMoving() && Constants.kEnablePhotonVisionCamera2 && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
+					resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
 				}
 			}
-
-			// vision1.periodic();
-			// vision2.periodic();
-
-			// if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
-			// 	resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
-			// } else if(!gyro.isMoving() && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
-			// 	resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
-			// }
 		}
 
 		if (Constants.kEnableLimelight) {
@@ -853,7 +865,6 @@ public class DriveSubsystem extends SubsystemBase {
 		try {
 
 			RobotConfig config = RobotConfig.fromGUISettings();
-			//PIDConstants kPPDriveConstants = new PIDConstants(autoDriveP, autoDriveI, autoDriveD);
 
 			AutoBuilder.configure(
 				this::getPoseEstimatorPose2d, 

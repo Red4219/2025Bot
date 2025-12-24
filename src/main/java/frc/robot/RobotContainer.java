@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.tools.JoystickUtils;
 import frc.robot.tools.Limelight;
 import frc.robot.tools.PhotonVision;
-import frc.robot.tools.parts.PathBuilder;
 import frc.robot.mechanisms.LED;
 import frc.robot.mechanisms.LED.LEDStatus;
 import frc.robot.Constants.AutoConstants;
@@ -75,10 +74,6 @@ public class RobotContainer {
 	public static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 	public static final LED led1 = new LED(3);
-	
-	// This is required by pathplanner
-	//public final static PathBuilder autoBuilder = new PathBuilder();
-
 	private final CommandXboxController driverController = new CommandXboxController(0);
 	private final CommandXboxController operatorController = new CommandXboxController(1);
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();

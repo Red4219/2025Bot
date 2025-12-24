@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.973,
-        "y": 0.672
+        "x": 5.977,
+        "y": 4.04
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.973,
-        "y": 0.9225367795124448
+        "x": 6.977,
+        "y": 4.04
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.973,
-        "y": 2.671
+        "x": 7.13,
+        "y": 4.04
       },
       "prevControl": {
-        "x": 5.973,
-        "y": 2.421
+        "x": 6.13,
+        "y": 4.04
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 0.75,
+    "maxVelocity": 15.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": true
+    "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -179.412
   },
   "reversed": false,
-  "folder": "Offseason",
+  "folder": "leave path",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": -90.0
+    "velocity": 0,
+    "rotation": -179.412
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
