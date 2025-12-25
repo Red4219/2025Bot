@@ -30,6 +30,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -130,14 +131,27 @@ public class DriveSubsystem extends SubsystemBase {
 	private double driveI = ModuleConstants.kModuleDriveGains.kI;
 	private double driveD = ModuleConstants.kModuleDriveGains.kD;
 
+	private GenericEntry entryDriveP = null;
+	private GenericEntry entryDriveI = null;
+	private GenericEntry entryDriveD = null;
+
 	private double turnP = ModuleConstants.kModuleTurningGains.kP;
 	private double turnI = ModuleConstants.kModuleTurningGains.kI;
 	private double turnD = ModuleConstants.kModuleTurningGains.kD;
+
+	private GenericEntry entryTurnP = null;
+	private GenericEntry entryTurnI = null;
+	private GenericEntry entryTurnD = null;
 
 	private Trajectory trajectory = null;
 	//private Trajectory.State goal = null;
 	private Command pathfindingCommand = null;
 	private boolean gotoPoseRunning = false;
+
+	private GenericEntry entryAutoP = null;
+	private GenericEntry entryAutoI = null;
+	private GenericEntry entryAutoD = null;
+	private PIDConstants autoDrivePID = Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants;
 
 
 	// test for auto positioning
@@ -317,6 +331,44 @@ public class DriveSubsystem extends SubsystemBase {
 
 			// auto tab stuff
 			ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
+			ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+
+			entryAutoP = autoTab.add("AutoP", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kP)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryAutoI = autoTab.add("AutoI", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kI)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryAutoD = autoTab.add("AutoD", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kD)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryDriveP = swerveTab.add("DriveP", ModuleConstants.kModuleDriveGains.kP)
+			.withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryDriveI = swerveTab.add("DriveI", ModuleConstants.kModuleDriveGains.kI)
+			.withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryDriveD = swerveTab.add("DriveD", ModuleConstants.kModuleDriveGains.kD)
+			.withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryTurnP = swerveTab.add("TurnP", ModuleConstants.kModuleTurningGains.kP)
+			.withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryTurnI = swerveTab.add("TurnI", ModuleConstants.kModuleTurningGains.kI)
+			.withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryTurnD = swerveTab.add("TurnD", ModuleConstants.kModuleTurningGains.kD)
+			.withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
 			/*autoTab.addDouble("AutoX Position", this::getAutoX_Position);
 			autoTab.addDouble("AutoY Position", this::getAutoY_Position);
 			autoTab.addBoolean("AutoX Status", this::getAutoPositionStatusX);
@@ -330,7 +382,7 @@ public class DriveSubsystem extends SubsystemBase {
 			gyroTab.addDouble("Roll", gyro::getRoll);
 
 			//Swerve tab stuff
-			ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+			//ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
 			// swerveTab.addDouble("FL Absolute", frontLeft::getAbsoluteHeading);
 			// swerveTab.addDouble("FR Absolute", frontRight::getAbsoluteHeading);
 			// swerveTab.addDouble("RL Absolute", rearLeft::getAbsoluteHeading);
@@ -342,9 +394,9 @@ public class DriveSubsystem extends SubsystemBase {
 			// swerveTab.addBoolean("Auto Aim", this::autoAim);
 			// swerveTab.addBoolean("Target Locked", this::getTargetLocked);
 
-            SmartDashboard.putData(this);
-            Shuffleboard.getTab("Swerve")
-				.add(this);
+            //SmartDashboard.putData(this);
+            //Shuffleboard.getTab("Swerve")
+			//	.add(this);
 		}
 
 		gyro.reset();
@@ -367,6 +419,79 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+
+		if(Constants.kDebugDriveTrain) {
+
+			// Check the Auto PID Constants
+			if(
+				entryAutoP.getDouble(0.0) != autoDrivePID.kP
+				|| entryAutoI.getDouble(0.0) != autoDrivePID.kI
+				|| entryAutoD.getDouble(0.0) != autoDrivePID.kD
+				) {
+
+				autoDrivePID = new PIDConstants(
+					entryAutoP.getDouble(0.0),
+					entryAutoI.getDouble(0.0),
+					entryAutoD.getDouble(0.0)
+					);
+
+				try {
+
+					RobotConfig config = RobotConfig.fromGUISettings();
+		
+					AutoBuilder.configure(
+						this::getPoseEstimatorPose2d,
+						this::resetOdometry,
+						this::getChassisSpeedsRobotRelative,
+						this::setChassisSpeedsRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
+						new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+							autoDrivePID, // Translation PID constants
+							AutoConstants.PathPLannerConstants.kPPTurnConstants // Rotation PID constants
+						),
+						config, 
+						this::getAllianceAuto,
+						this
+					);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			// Check the drive PIDs
+			if(
+				entryDriveP.getDouble(0.0) != driveP
+				|| entryDriveI.getDouble(0.0) != driveI
+				|| entryDriveD.getDouble(0.0) != driveD
+				) {
+
+				driveP = entryDriveP.getDouble(0.0);
+				driveI = entryDriveI.getDouble(0.0);
+				driveD = entryDriveD.getDouble(0.0);
+
+				frontLeft.setDrivePID(driveP, driveI, driveD);
+				frontRight.setDrivePID(driveP, driveI, driveD);
+				rearLeft.setDrivePID(driveP, driveI, driveD);
+				rearRight.setDrivePID(driveP, driveI, driveD);
+			}
+
+			// Check the turn PIDs
+			if(
+				entryTurnP.getDouble(0.0) != turnP
+				|| entryTurnI.getDouble(0.0) != turnI
+				|| entryTurnD.getDouble(0.0) != turnD
+				) {
+
+					turnP = entryTurnP.getDouble(0.0);
+					turnI = entryTurnI.getDouble(0.0);
+					turnD = entryTurnD.getDouble(0.0);
+
+				frontLeft.setTurningPID(turnP, turnI, turnD);
+				frontRight.setTurningPID(turnP, turnI, turnD);
+				rearLeft.setTurningPID(turnP, turnI, turnD);
+				rearRight.setTurningPID(turnP, turnI, turnD);
+			}
+		}
+
 		// This method will be called once per scheduler run
 		updateOdometry();
 
@@ -675,18 +800,17 @@ public class DriveSubsystem extends SubsystemBase {
 				}
 			} else {
 
-				if(Constants.kEnablePhotonVisionCamera1) {
+				if(vision1.getCamera1Enabled()) {
 					vision1.periodic();
 				}
 				
-				if(Constants.kEnablePhotonVisionCamera2) {
+				if(vision2.getCamera2Enabled()) {
 					vision2.periodic();
 				}
 
-
-				if(!gyro.isMoving() && Constants.kEnablePhotonVisionCamera1 && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
+				if(!gyro.isMoving() && vision1.getCamera1Enabled() && Constants.kResetOdometryFromPhotonVision && !isSim && vision1.isVisionEstAvailable()) {
 					resetOdometry(vision1.getEstimatedRobotPose().estimatedPose.toPose2d());
-				} else if(!gyro.isMoving() && Constants.kEnablePhotonVisionCamera2 && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
+				} else if(!gyro.isMoving() && vision2.getCamera2Enabled() && Constants.kResetOdometryFromPhotonVision && !isSim && vision2.isVisionEstAvailable()) {
 					resetOdometry(vision2.getEstimatedRobotPose().estimatedPose.toPose2d());
 				}
 			}
@@ -848,7 +972,7 @@ public class DriveSubsystem extends SubsystemBase {
 		turnD = d;
 	}
 
-	public double getAutoDriveP() {
+	/*public double getAutoDriveP() {
 		return AutoConstants.PathPLannerConstants.kPPDriveConstants.kP;
 	}
 
@@ -858,7 +982,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public double getAutoDriveD() {
 		return AutoConstants.PathPLannerConstants.kPPDriveConstants.kD;
-	}
+	}*/
 	
 	public void CreateAutoBuilder() {
 
@@ -867,8 +991,8 @@ public class DriveSubsystem extends SubsystemBase {
 			RobotConfig config = RobotConfig.fromGUISettings();
 
 			AutoBuilder.configure(
-				this::getPoseEstimatorPose2d, 
-				this::resetOdometry, 
+				this::getPoseEstimatorPose2d,
+				this::resetOdometry,
 				this::getChassisSpeedsRobotRelative,
 				this::setChassisSpeedsRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
 				new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains

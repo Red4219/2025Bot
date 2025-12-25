@@ -84,11 +84,11 @@ public class PhotonVision {
 				isSim = true;
 			}
 
-			if(Constants.PhotonVisionConstants.kEnableCamera1) {
+			if(Constants.kEnablePhotonVisionCamera1) {
 				_camera = new PhotonCamera(PhotonVisionConstants.CameraName);
 			}
 			
-			if(Constants.PhotonVisionConstants.kEnableCamera2) {
+			if(Constants.kEnablePhotonVisionCamera2) {
 				_camera2 = new PhotonCamera(PhotonVisionConstants.Camera2Name);
 			}
 
@@ -130,7 +130,7 @@ public class PhotonVision {
 			}
 
 			// Create the elements in Shuffleboard for debugging if debugPhotonVision is true 
-			if (Constants.PhotonVisionConstants.kEnableCamera1 
+			if (Constants.kEnablePhotonVisionCamera1 
 				&& _camera.isConnected() 
 				&& Constants.kDebugPhotonVision == true) {
 
@@ -142,7 +142,7 @@ public class PhotonVision {
 				//photonVisionTab.addString("Targets Used", this::targetsUsed);
 			}
 
-			if (Constants.PhotonVisionConstants.kEnableCamera2 
+			if (Constants.kEnablePhotonVisionCamera2 
 				&& _camera2.isConnected() 
 				&& Constants.kDebugPhotonVision == true) {
 
@@ -268,7 +268,7 @@ public class PhotonVision {
 
 	// Is the camera1 connected?
 	public boolean isConnected() {
-		if(Constants.kEnablePhotonVision && Constants.PhotonVisionConstants.kEnableCamera1) {
+		if(Constants.kEnablePhotonVision && Constants.kEnablePhotonVisionCamera1) {
 
 			if(_camera != null) {
 				return _camera.isConnected();
@@ -282,7 +282,7 @@ public class PhotonVision {
 
 	// Is the camera2 connected?
 	public boolean isConnected2() {
-		if(Constants.kEnablePhotonVision && Constants.PhotonVisionConstants.kEnableCamera2) {
+		if(Constants.kEnablePhotonVision && Constants.kEnablePhotonVisionCamera2) {
 
 			if(_camera2 != null) {
 				return _camera2.isConnected();
@@ -428,12 +428,12 @@ public class PhotonVision {
 	public void setReferencePose2d(Pose2d referencePose) {
 		
 		// If camera1 is enabled and the estimator is not null
-		if(Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator != null) {
+		if(Constants.kEnablePhotonVisionCamera1 && _photonPoseEstimator != null) {
 			_photonPoseEstimator.setReferencePose(referencePose);
 		}
 
 		// If camera2 is enabled and the estimator is not null
-		if(Constants.PhotonVisionConstants.kEnableCamera2 && _photonPoseEstimator2 != null) {
+		if(Constants.kEnablePhotonVisionCamera2 && _photonPoseEstimator2 != null) {
 			_photonPoseEstimator2.setReferencePose(referencePose);
 		}
 	}
@@ -441,11 +441,11 @@ public class PhotonVision {
 	// Set the reference 3D (X,Y,Z) pose/position for PhotonVision to use
 	public void setReferencePose3d(Pose3d referencePose) {
 
-		if(Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator != null) {
+		if(Constants.kEnablePhotonVisionCamera1 && _photonPoseEstimator != null) {
 			_photonPoseEstimator.setReferencePose(referencePose);
 		}
 
-		if(Constants.PhotonVisionConstants.kEnableCamera2 && _photonPoseEstimator2 != null) {
+		if(Constants.kEnablePhotonVisionCamera2 && _photonPoseEstimator2 != null) {
 			_photonPoseEstimator2.setReferencePose(referencePose);
 		}
 	}
@@ -571,7 +571,7 @@ public class PhotonVision {
 
 		try {
 
-			if (Constants.PhotonVisionConstants.kEnableCamera1 && _photonPoseEstimator != null) {
+			if (Constants.kEnablePhotonVisionCamera1 && _photonPoseEstimator != null) {
 
 				// Check if we are in simulation and the previousEstimatedRobotPose is not null
 				// and we are not connected to the camera
@@ -638,7 +638,7 @@ public class PhotonVision {
 
 		try {
 
-			if (Constants.PhotonVisionConstants.kEnableCamera2 && _photonPoseEstimator2 != null) {
+			if (Constants.kEnablePhotonVisionCamera2 && _photonPoseEstimator2 != null) {
 
 				// Check if we are in simulation and the previousEstimatedRobotPose is not null
 				// and we are not connected to the camera
@@ -689,13 +689,13 @@ public class PhotonVision {
 
 		_visionSystemSim = new VisionSystemSim("main");
 
-		if(Constants.PhotonVisionConstants.kEnableCamera1) {
+		if(Constants.kEnablePhotonVisionCamera1) {
 			PhotonCameraSim cameraSim1 = new PhotonCameraSim(_camera);
 			cameraSim1.enableDrawWireframe(true);
 			_visionSystemSim.addCamera(cameraSim1, Constants.PhotonVisionConstants.cameraToRobot);
 		}
 
-		if(Constants.PhotonVisionConstants.kEnableCamera2) {
+		if(Constants.kEnablePhotonVisionCamera2) {
 			PhotonCameraSim cameraSim2 = new PhotonCameraSim(_camera2);
 			cameraSim2.enableDrawWireframe(true);
 			_visionSystemSim.addCamera(cameraSim2, Constants.PhotonVisionConstants.camera2ToRobot);

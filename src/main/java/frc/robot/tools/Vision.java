@@ -36,7 +36,14 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
  import edu.wpi.first.math.numbers.N1;
  import edu.wpi.first.math.numbers.N3;
- import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+ import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants;
 import frc.robot.Constants.PhotonVisionConstants;
 import frc.robot.Robot;
@@ -61,6 +68,10 @@ import org.photonvision.EstimatedRobotPose;
     private final PhotonPoseEstimator photonEstimator;
     private Matrix<N3, N1> curStdDevs;
     private final EstimateConsumer estConsumer;
+    private GenericEntry photonVisionEnableCam1;
+    private GenericEntry photonVisionEnableCam2;
+    private boolean cam1Enabled = false;
+    private boolean cam2Enabled = false;
 
     private AprilTagFieldLayout aprilTagFieldLayout = null;
  
@@ -80,43 +91,60 @@ import org.photonvision.EstimatedRobotPose;
       * @param estConsumer Lamba that will accept a pose estimate and pass it to your desired {@link
       *     edu.wpi.first.math.estimator.SwerveDrivePoseEstimator}
       */
-     public Vision(EstimateConsumer estConsumer, CameraEnum cameraEnum) {
+    public Vision(EstimateConsumer estConsumer, CameraEnum cameraEnum) {
          this.estConsumer = estConsumer;
          this.cameraEnum = cameraEnum;
          String cameraName = "";
+         cam1Enabled = Constants.kEnablePhotonVisionCamera1;
+         cam2Enabled = Constants.kEnablePhotonVisionCamera2;
+
+        ShuffleboardTab photonVisionTab = Shuffleboard.getTab("PhotonVision");
+        if(cameraEnum == CameraEnum.Camera1) {
+
+            photonVisionEnableCam1 = photonVisionTab.add("PhotonVisionEnableCam1", cam1Enabled)
+            .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+            photonVisionEnableCam1.setBoolean(cam1Enabled);
+
+        } else if(cameraEnum == CameraEnum.Camera2) {
+
+            photonVisionEnableCam2 = photonVisionTab.add("PhotonVisionEnableCam2", cam2Enabled)
+            .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+            photonVisionEnableCam2.setBoolean(cam2Enabled);
+
+        }
         
         try {
             aprilTagFieldLayout = AprilTagFieldLayout
 						.loadFromResource(AprilTagFields.k2025ReefscapeAndyMark
 						.m_resourceFile);
-         } catch (IOException e) {
+        } catch (IOException e) {
             System.out.println(e.toString());
-         }
+        }
 
-         if(cameraEnum == CameraEnum.Camera1) {
+        if(cameraEnum == CameraEnum.Camera1) {
             cameraName = PhotonVisionConstants.CameraName;
             photonEstimator =
                  new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PhotonVisionConstants.cameraToRobot);
-         } else {
+        } else {
             cameraName = PhotonVisionConstants.Camera2Name;
             photonEstimator =
                  new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PhotonVisionConstants.camera2ToRobot);
-         }
+        }
 
 
-         //camera = new PhotonCamera(PhotonVisionConstants.CameraName);
-         if(cameraEnum == CameraEnum.Camera1) {
+        //camera = new PhotonCamera(PhotonVisionConstants.CameraName);
+        if(cameraEnum == CameraEnum.Camera1) {
             camera = new PhotonCamera("cam1");
-         } else {
+        } else {
             camera = new PhotonCamera("cam2");
-         }
+        }
 
          
  
-         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
  
-         // ----- Simulation
-         if (Robot.isSimulation()) {
+        // ----- Simulation
+        if (Robot.isSimulation()) {
              // Create the vision system simulation which handles cameras and targets on the field.
              visionSim = new VisionSystemSim("main");
              // Add all the AprilTags inside the tag layout as visible targets to this simulated field.
@@ -140,11 +168,18 @@ import org.photonvision.EstimatedRobotPose;
              }
  
              cameraSim.enableDrawWireframe(true);
-         }
-     }
+        }
+    }
  
      public void periodic() {
         allTagPoses.clear();
+
+        if(cameraEnum == CameraEnum.Camera1) {
+            cam1Enabled = photonVisionEnableCam1.getBoolean(true);
+        } else if(cameraEnum == CameraEnum.Camera2) {
+            cam2Enabled = photonVisionEnableCam2.getBoolean(true);
+        }
+
          Optional<EstimatedRobotPose> visionEst = Optional.empty();
          for (var change : camera.getAllUnreadResults()) {
              visionEst = photonEstimator.update(change);
@@ -315,5 +350,13 @@ import org.photonvision.EstimatedRobotPose;
 
     public EstimatedRobotPose getEstimatedRobotPose() {
         return estimatedRobotPose;
+    }
+
+    public boolean getCamera1Enabled() {
+        return cam1Enabled;
+    }
+
+    public boolean getCamera2Enabled() {
+        return cam2Enabled;
     }
  }

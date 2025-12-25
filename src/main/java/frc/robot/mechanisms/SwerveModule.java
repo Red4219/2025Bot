@@ -97,7 +97,8 @@ public class SwerveModule {
 	//private NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
 
 	SparkMaxConfig turnConfig = null;
-	SparkFlexConfig driveConfig = null;
+	//SparkFlexConfig driveConfig = null;
+	TalonFXConfiguration driveConfig = null;
 	
 	SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
 			ModuleConstants.ksTurning, ModuleConstants.kvTurning);
@@ -164,7 +165,7 @@ public class SwerveModule {
 		cancoder = new CANcoder(absoluteEncoderPort, Constants.kCanivoreCANBusName);
 		cancoder.clearStickyFaults();
 		
-		TalonFXConfiguration driveConfig = new TalonFXConfiguration();
+		driveConfig = new TalonFXConfiguration();
 		driveConfig
 		.withMotorOutput(
 			new MotorOutputConfigs()
@@ -431,13 +432,22 @@ public class SwerveModule {
 	}
 
 	public void setDrivePID(double p, double i, double d) {
-		driveConfig.closedLoop
+		
+		var slot0Configs = new Slot0Configs();
+		slot0Configs.kS = 0.1;
+		slot0Configs.kV = 0.12;
+		slot0Configs.kP = p; // An error of 1 rps results in 0.11 V output
+		slot0Configs.kI = i; // no output for integrated error
+		slot0Configs.kD = d; // no output for error derivative
+		driveMotor.getConfigurator().apply(slot0Configs);
+
+		/*driveConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
 			.pid(
 				p,
 				i,
 				d
-			);
+			);*/
 	}
 	public void selectSong(int song){
 		kOrchestra.loadMusic(ModuleConstants.song[song]);
