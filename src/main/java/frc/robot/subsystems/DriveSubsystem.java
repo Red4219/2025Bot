@@ -153,6 +153,11 @@ public class DriveSubsystem extends SubsystemBase {
 	private GenericEntry entryAutoD = null;
 	private PIDConstants autoDrivePID = Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants;
 
+	private GenericEntry entryAutoTurnP = null;
+	private GenericEntry entryAutoTurnI = null;
+	private GenericEntry entryAutoTurnD = null;
+	private PIDConstants autoTurnPID = Constants.AutoConstants.PathPLannerConstants.kPPTurnConstants;
+
 
 	// test for auto positioning
 	HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
@@ -333,15 +338,27 @@ public class DriveSubsystem extends SubsystemBase {
 			ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
 			ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
 
-			entryAutoP = autoTab.add("AutoP", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kP)
+			entryAutoP = autoTab.add("DriveP", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kP)
             .withWidget(BuiltInWidgets.kTextView)
 			.getEntry();
 
-			entryAutoI = autoTab.add("AutoI", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kI)
+			entryAutoI = autoTab.add("DriveI", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kI)
             .withWidget(BuiltInWidgets.kTextView)
 			.getEntry();
 
-			entryAutoD = autoTab.add("AutoD", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kD)
+			entryAutoD = autoTab.add("DriveD", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kD)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryAutoTurnP = autoTab.add("TurnP", Constants.AutoConstants.PathPLannerConstants.kPPTurnConstants.kP)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryAutoTurnI = autoTab.add("TurnI", Constants.AutoConstants.PathPLannerConstants.kPPTurnConstants.kI)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+			entryAutoTurnD = autoTab.add("TurnD", Constants.AutoConstants.PathPLannerConstants.kPPTurnConstants.kD)
             .withWidget(BuiltInWidgets.kTextView)
 			.getEntry();
 
@@ -427,13 +444,23 @@ public class DriveSubsystem extends SubsystemBase {
 				entryAutoP.getDouble(0.0) != autoDrivePID.kP
 				|| entryAutoI.getDouble(0.0) != autoDrivePID.kI
 				|| entryAutoD.getDouble(0.0) != autoDrivePID.kD
+				|| entryAutoTurnP.getDouble(0.0) != autoTurnPID.kP
+				|| entryAutoTurnI.getDouble(0.0) != autoTurnPID.kI
+				|| entryAutoTurnD.getDouble(0.0) != autoTurnPID.kD
 				) {
+
 
 				autoDrivePID = new PIDConstants(
 					entryAutoP.getDouble(0.0),
 					entryAutoI.getDouble(0.0),
 					entryAutoD.getDouble(0.0)
-					);
+				);
+
+				autoTurnPID = new PIDConstants(
+					entryAutoTurnP.getDouble(0.0),
+					entryAutoTurnI.getDouble(0.0),
+					entryAutoTurnD.getDouble(0.0)
+				);
 
 				try {
 
@@ -446,7 +473,7 @@ public class DriveSubsystem extends SubsystemBase {
 						this::setChassisSpeedsRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards 
 						new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
 							autoDrivePID, // Translation PID constants
-							AutoConstants.PathPLannerConstants.kPPTurnConstants // Rotation PID constants
+							autoTurnPID // Rotation PID constants
 						),
 						config, 
 						this::getAllianceAuto,

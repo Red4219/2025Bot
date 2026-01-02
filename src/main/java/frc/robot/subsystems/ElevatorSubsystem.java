@@ -134,7 +134,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                         .addDouble("Target", this::getPosition)
                         .withWidget(BuiltInWidgets.kTextView);
 
-                SmartDashboard.putData(this);
+                //SmartDashboard.putData(this);
                 Shuffleboard.getTab("Elevator").add(this);
             }
         }

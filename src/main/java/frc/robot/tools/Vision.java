@@ -34,7 +34,10 @@ import edu.wpi.first.math.Matrix;
  import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
- import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
  import edu.wpi.first.math.numbers.N3;
  import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.Sendable;
@@ -71,7 +74,16 @@ import org.photonvision.EstimatedRobotPose;
     private GenericEntry photonVisionEnableCam1;
     private GenericEntry photonVisionEnableCam2;
     private boolean cam1Enabled = false;
+    private Transform3d cameraToRobot = null; 
+    GenericEntry entryCameraXOffset = null;
+    GenericEntry entryCameraYOffset = null;
+    GenericEntry entryCameraHeight = null;
+    GenericEntry entryCameraRotation = null;
     private boolean cam2Enabled = false;
+    /*private Transform3d camera2ToRobot = Constants.PhotonVisionConstants.camera2ToRobot;
+    GenericEntry entryCamera2XOffset = null;
+    GenericEntry entryCamera2YOffset = null;
+    GenericEntry entryCamera2Height = null;*/
 
     private AprilTagFieldLayout aprilTagFieldLayout = null;
  
@@ -169,9 +181,61 @@ import org.photonvision.EstimatedRobotPose;
  
              cameraSim.enableDrawWireframe(true);
         }
+
+        if(Constants.PhotonVisionConstants.debugPhotonVision) {
+            String cameraOffsetName = "camera1";
+            cameraToRobot = Constants.PhotonVisionConstants.cameraToRobot;
+
+            if(cameraEnum == CameraEnum.Camera2) {
+                cameraOffsetName = "camera2";
+                cameraToRobot = Constants.PhotonVisionConstants.camera2ToRobot;
+            }
+
+            entryCameraXOffset = photonVisionTab.add(cameraOffsetName + "XOffset", cameraToRobot.getX())
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+            entryCameraYOffset = photonVisionTab.add(cameraOffsetName + "YOffset", cameraToRobot.getY())
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+            entryCameraHeight = photonVisionTab.add(cameraOffsetName + "Height", cameraToRobot.getZ())
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+            entryCameraRotation = photonVisionTab.add(cameraOffsetName + "Rotation", cameraToRobot.getRotation().getAngle())
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+        }
     }
  
      public void periodic() {
+
+        if(Constants.PhotonVisionConstants.debugPhotonVision) {
+            if(
+                entryCameraXOffset.getDouble(0.0) != cameraToRobot.getX()
+                || entryCameraYOffset.getDouble(0.0) != cameraToRobot.getY()
+                || entryCameraHeight.getDouble(0.0) != cameraToRobot.getZ()
+                || entryCameraRotation.getDouble(0.0) != cameraToRobot.getRotation().getAngle()
+            ) {
+
+
+                cameraToRobot = new Transform3d(
+                    new Translation3d(
+                        entryCameraXOffset.getDouble(0.0), 
+                        entryCameraYOffset.getDouble(0.0), 
+                        entryCameraHeight.getDouble(0.0)
+                    ),
+                    new Rotation3d(
+						0,
+						entryCameraRotation.getDouble(0.0),
+						0
+					)
+                );
+
+            }
+        }
+
         allTagPoses.clear();
 
         if(cameraEnum == CameraEnum.Camera1) {

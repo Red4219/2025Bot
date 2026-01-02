@@ -21,6 +21,8 @@ public class Limelight {
 	private double[] poseArray = new double[3];
 	private String name = "";
 
+	private int targetId = 0;
+
 
     public Limelight(String name) {
 		LimelightHelpers.setCameraPose_RobotSpace(
@@ -90,5 +92,23 @@ public class Limelight {
 		}
 
 		return detections;
+	}
+
+	public void setTargetId(int targetId) {
+		this.targetId = targetId;
+	}
+
+	public RawDetection targetDetection() {
+		rawDetections = LimelightHelpers.getRawDetections(Constants.LimelightConstants.name1);
+
+		for (RawDetection detection : rawDetections) {
+
+			if( detection.classId == this.targetId) {
+
+				return detection;
+			}
+		}
+
+		return null;
 	}
 }

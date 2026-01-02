@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,6 +58,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.subsystems.EndEffectorSubsystem.EndEffectorState;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -70,6 +72,7 @@ public class RobotContainer {
 	public static final Limelight limelight = new Limelight("limelight");
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
 	public static final ArmSubsystem armSubsystem = new ArmSubsystem();
+	public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 	public static final EndEffectorSubsystem endEffectorSubsystem = new EndEffectorSubsystem();
 	public static final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 	public static final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
@@ -77,6 +80,7 @@ public class RobotContainer {
 	private final CommandXboxController driverController = new CommandXboxController(0);
 	private final CommandXboxController operatorController = new CommandXboxController(1);
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();
+	private static final Constants.RobotState currentRobotState = Constants.RobotState.INTAKE;
 	
 	public SendableChooser<Command> getAutoChooser() {
 		return autoChooser;
@@ -136,6 +140,25 @@ public class RobotContainer {
 			.withWidget(BuiltInWidgets.kComboBoxChooser);
 	
 			// led1.setStatus(LEDStatus.ready);
+			//ShuffleboardTab smartDashboard = Shuffleboard.getTab("SmartDashboard");
+			//shooterTab.addBoolean("HasTarget", this::hasTarget);
+
+			SmartDashboard.putString("Status", getStatusString());
+		}
+
+		public String getStatusString() {
+			switch(currentRobotState) {
+				case CLIMB:
+					return "Climb";
+				case INTAKE:
+					return "Intake";
+				case SHOOT:
+					return "Shoot";
+				default:
+					break;				
+			}
+
+			return "";
 		}
 	
 		private void configureBindings() {

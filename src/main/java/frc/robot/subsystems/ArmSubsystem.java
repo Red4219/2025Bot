@@ -94,7 +94,7 @@ public class ArmSubsystem extends SubsystemBase {
                     .addDouble("Target", this::getTargetPosition)
                     .withWidget(BuiltInWidgets.kTextView);
 
-                SmartDashboard.putData(this);
+                //SmartDashboard.putData(this);
                 Shuffleboard.getTab("Arm").add(this);
 
             }

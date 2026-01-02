@@ -106,7 +106,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                 //     .addDouble("Target Velocity 2", this::getTargetVelocity2)
                 //     .withWidget(BuiltInWidgets.kTextView);
 
-                SmartDashboard.putData(this);
+                //SmartDashboard.putData(this);
                 Shuffleboard.getTab("End Effector").add(this);
 
             }   

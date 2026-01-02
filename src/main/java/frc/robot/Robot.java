@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 // This is needed for AdvantageScope
 public class Robot extends LoggedRobot {
@@ -28,6 +29,7 @@ public class Robot extends LoggedRobot {
 	private ArmSubsystem armSubsystem = RobotContainer.armSubsystem;
 	private ElevatorSubsystem elevatorSystem = RobotContainer.elevatorSubsystem;
 	private RobotContainer robotContainer;
+	private ShooterSubsystem shooterSubsystem = RobotContainer.shooterSubsystem;
 	//private REVPhysicsSim simulator;
 
 	private NetworkTableInstance inst;
