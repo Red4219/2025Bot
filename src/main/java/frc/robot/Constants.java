@@ -450,10 +450,10 @@ public final class Constants {
 		public static final Pose2d kReefPoseRed = new Pose2d(0.98, 1.05, Rotation2d.fromDegrees(-120.16));
 		public static final Pose2d kReefPoseBlue = new Pose2d(15.35, 0.88, Rotation2d.fromDegrees(-120.0));*/
 
-		public static final Pose2d APRILTAG_3 = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
+		/*public static final Pose2d APRILTAG_3 = new Pose2d(5.973, 0.672, Rotation2d.fromDegrees(-90));
 		public static final Pose2d APRILTAG_4 = new Pose2d(8.5, 2.0, Rotation2d.fromDegrees(0));
 		public static final Pose2d APRILTAG_9 = new Pose2d(5.4, 2.9, Rotation2d.fromDegrees(110));
-		public static final Pose2d APRILTAG_10 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));
+		public static final Pose2d APRILTAG_10 = new Pose2d(10.973, 0.672, Rotation2d.fromDegrees(-90));*/
 	}
 
 	public static class ShooterConstants {
@@ -462,20 +462,20 @@ public final class Constants {
 
 		public static final boolean invertShooterMotor = false;
 		public static final int shooterMotorId = 20;
-		public static final double shooterP = 0.0;
-		public static final double shooterI = 0.0;
-		public static final double shooterD = 0.0;
+		public static final double shooterP = 0.1;
+		public static final double shooterI = 0.2;
+		public static final double shooterD = 0.3;
 
 		public static final int turretMotorId = 21;
 		public static final boolean invertTurretMotor = false;
-		public static final double turretP = 0.0;
-		public static final double turretI = 0.0;
-		public static final double turretD = 0.0;
+		public static final double turretP = 0.1;
+		public static final double turretI = 0.2;
+		public static final double turretD = 0.3;
 
 		public static final int hoodMotorId = 22;
 		public static final boolean invertHoodMotor = false;
-		public static final double hoodP = 0.0;
-		public static final double hoodI = 0.0;
-		public static final double hoodD = 0.0;
+		public static final double hoodP = 0.1;
+		public static final double hoodI = 0.2;
+		public static final double hoodD = 0.3;
 	}
 }

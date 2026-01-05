@@ -61,6 +61,13 @@ public class ShooterSubsystem extends SubsystemBase {
     private double hoodD = Constants.ShooterConstants.shooterD;
     public GenericEntry entryHoodD = null;
 
+    private double turretP = Constants.ShooterConstants.turretP;
+    public GenericEntry entryTurretP = null;
+    private double turretI = Constants.ShooterConstants.turretI;
+    public GenericEntry entryTurretI = null;
+    private double turretD = Constants.ShooterConstants.turretD;
+    public GenericEntry entryTurretD = null;
+
     public ShooterSubsystem() {
         if(Constants.ShooterConstants.enabled) {
             isSim = RobotBase.isReal();
@@ -174,6 +181,19 @@ public class ShooterSubsystem extends SubsystemBase {
             entryHoodD = shooterTab.add("HoodD", shooterD)
             .withWidget(BuiltInWidgets.kTextView)
 			.getEntry();
+
+            // Turret
+            entryTurretP = shooterTab.add("TurretP", turretP)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+            entryTurretI = shooterTab.add("TurretI", turretI)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
+
+            entryTurretD = shooterTab.add("TurretD", turretD)
+            .withWidget(BuiltInWidgets.kTextView)
+			.getEntry();
         }
     }
 
@@ -250,6 +270,27 @@ public class ShooterSubsystem extends SubsystemBase {
                 hoodP = entryHoodP.getDouble(0.0);
                 hoodI = entryHoodI.getDouble(0.0);
                 hoodD = entryHoodD.getDouble(0.0);
+
+                hoodConfig.closedLoop
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+			    .pid(
+				    hoodP,
+				    hoodI,
+				    hoodD
+			    );
+
+            }
+
+            // Turrett
+            if(
+				entryTurretP.getDouble(0.0) != turretP
+				|| entryTurretI.getDouble(0.0) != turretI
+				|| entryTurretD.getDouble(0.0) != turretD
+            ) {
+
+                turretP = entryTurretP.getDouble(0.0);
+                turretI = entryTurretI.getDouble(0.0);
+                turretD = entryTurretD.getDouble(0.0);
 
                 hoodConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
