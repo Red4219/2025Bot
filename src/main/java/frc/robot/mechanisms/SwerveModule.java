@@ -368,16 +368,6 @@ public class SwerveModule {
 		}
 	}
 
-	private double velocityToRPS(double velocity){
-		// 	ModuleConstants.kdriveGearRatioL3
-		// 	* ModuleConstants.kwheelCircumference
-		// 	//ModuleConstants.kwheelCircumference / ModuleConstants.kdriveGearRatioL3 
-		// 	* (1d / 60d)
-		double veloRps = ((velocity/ModuleConstants.kwheelCircumference)*6.12)/60;
-		return veloRps;
-
-	}
-
 	public static double linearVelocityToRevolutionsPerSecond(double linearVelocity, double radius) {
         if (radius <= 0) {
             throw new IllegalArgumentException("Radius must be a positive value.");
@@ -407,7 +397,7 @@ public class SwerveModule {
     }
 
 	public void resetEncoders() {
-		
+		driveMotor.resetSignalFrequencies();
 	}
 
 	public void stopMotors() {
@@ -425,10 +415,6 @@ public class SwerveModule {
 
 	public void setTurningPID(double p, double i, double d) {
 		m_turningPIDController.setPID(p, i, d);
-	}
-
-	public void simulatePeriodic() {
-		
 	}
 
 	public void setDrivePID(double p, double i, double d) {

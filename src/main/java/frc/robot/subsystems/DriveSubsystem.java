@@ -1,14 +1,10 @@
 package frc.robot.subsystems;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -19,7 +15,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -31,7 +26,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -49,9 +43,7 @@ import frc.robot.tools.Vision;
 import frc.robot.tools.Vision.CameraEnum;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.commands.autonomous.AimCommand;
 import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer;
 //import frc.robot.Constants.DriveConstants.kDriveModes;
@@ -62,24 +54,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
-
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.mechanisms.LED.LEDStatus;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 
 
 public class DriveSubsystem extends SubsystemBase {
 
-	//private boolean fieldRelative = true;
 	private boolean gyroTurning = false;
 	private double targetRotationDegrees;
-
 	private final SwerveModule frontLeft;
 	private final SwerveModule frontRight;
 	private final SwerveModule rearLeft;
@@ -93,7 +77,6 @@ public class DriveSubsystem extends SubsystemBase {
 	);
 
 	// Initalizing the gyro sensor
-	//private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 	private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
 	private double xSpeed = 0.0;
@@ -158,6 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private GenericEntry entryAutoTurnD = null;
 	private PIDConstants autoTurnPID = Constants.AutoConstants.PathPLannerConstants.kPPTurnConstants;
 
+	ShuffleboardTab swerveTab = null;
 
 	// test for auto positioning
 	HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
@@ -336,7 +320,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 			// auto tab stuff
 			ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
-			ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+			swerveTab = Shuffleboard.getTab("Swerve");
 
 			entryAutoP = autoTab.add("DriveP", Constants.AutoConstants.PathPLannerConstants.kPPDriveConstants.kP)
             .withWidget(BuiltInWidgets.kTextView)
@@ -414,6 +398,10 @@ public class DriveSubsystem extends SubsystemBase {
             //SmartDashboard.putData(this);
             //Shuffleboard.getTab("Swerve")
 			//	.add(this);
+
+			swerveTab.addNumber("2D X", this::getPoseX);
+			swerveTab.addNumber("2D Y", this::getPoseX);
+			swerveTab.addNumber("2D Gyro", this::getHeading);
 		}
 
 		gyro.reset();
@@ -431,7 +419,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void simulationPeriodic() {
-
+		
 	}
 
 	@Override
@@ -522,17 +510,6 @@ public class DriveSubsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
 		updateOdometry();
 
-		if(Constants.kDebugDriveTrain == true) {
-			//SmartDashboard.putNumber("FL Offset Check", frontLeft.getAbsoluteHeading() + frontLeft.angleZero);
-			//SmartDashboard.putNumber("FR Offset Check", frontRight.getAbsoluteHeading() + frontRight.angleZero);
-			//SmartDashboard.putNumber("RL Offset Check", rearLeft.getAbsoluteHeading() + rearLeft.angleZero);
-			//SmartDashboard.putNumber("RR Offset Check", rearRight.getAbsoluteHeading() + rearRight.angleZero);
-			SmartDashboard.putNumber("2D X", getPose().getX());
-			SmartDashboard.putNumber("2D Y", getPose().getY());
-			SmartDashboard.putNumber("2D Gyro", -odometry.getPoseMeters().getRotation().getDegrees());
-			//SmartDashboard.putData("field", RobotContainer.field);
-		}
-
 		SmartDashboard.putData("field", RobotContainer.field);
 
 		//Logger.recordOutput("Odometry/Robot", odometry.getPoseMeters());
@@ -549,6 +526,14 @@ public class DriveSubsystem extends SubsystemBase {
 		combinedEstimatedPoseArray[1] = estimatedPose.getY();
 		combinedEstimatedPoseArray[2] = estimatedPose.getRotation().getDegrees();
 		Logger.recordOutput("Estimator/PoseArray", combinedEstimatedPoseArray);*/
+	}
+
+	public double getPoseX() {
+		return odometry.getPoseMeters().getX();
+	}
+
+	public double getPoseY() {
+		return odometry.getPoseMeters().getY();
 	}
 
 	// region getters
@@ -610,14 +595,6 @@ public class DriveSubsystem extends SubsystemBase {
 		xSpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
 		ySpeed *= ModuleConstants.kMaxModuleSpeedMetersPerSecond;
 
-		// if (gyroTurning) {
-		// //if(gyro.isRotating()) {
-		// 	targetRotationDegrees += rot;
-		// 	rot = gyroTurnPidController.calculate(getHeading360(), targetRotationDegrees);
-		// } else {
-		// 	rot *= DriveConstants.kMaxRPM;
-		// }
-
 		rot *= DriveConstants.kMaxRPM;
 
 		this.xSpeed = xSpeed;
@@ -626,23 +603,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if(isSim) {
 			swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-				//ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
 				ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, this.poseEstimator.getEstimatedPosition().getRotation())
 			);
 
-			// testing
-			// int dev = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
-			// SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev, "Yaw"));
-			// angle.set(
-			// 	angle.get() 
-			// 	+ ChassisSpeeds.fromFieldRelativeSpeeds(
-			// 		xSpeed, 
-			// 		ySpeed, 
-			// 		rot, 
-			// 		gyro.getRotation2d()
-			// 	).omegaRadiansPerSecond
-			// );
-			// end testing
 		} else {
 
 			swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -686,16 +649,12 @@ public class DriveSubsystem extends SubsystemBase {
 			return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
 		} 
 		
-		//return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d().unaryMinus());
-		//return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d());
 		return ChassisSpeeds.fromRobotRelativeSpeeds(xSpeed, ySpeed, rot, poseEstimator.getEstimatedPosition().getRotation());
 	}
 
 	// This is for auto
 	public DriveFeedforwards setChassisSpeedsRobotRelative(ChassisSpeeds chassisSpeeds, DriveFeedforwards feedForwards ) {
-
-		// chassisSpeeds = chassisSpeeds.times(-1.0);
-		
+	
 		swerveModuleStatesRobotRelative = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
 		// In simulation, the actual navx does not work, so set the value from the chassisSpeeds

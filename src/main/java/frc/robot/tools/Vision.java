@@ -212,6 +212,8 @@ import org.photonvision.EstimatedRobotPose;
      public void periodic() {
 
         if(Constants.PhotonVisionConstants.debugPhotonVision) {
+
+            // Check for changes
             if(
                 entryCameraXOffset.getDouble(0.0) != cameraToRobot.getX()
                 || entryCameraYOffset.getDouble(0.0) != cameraToRobot.getY()
@@ -238,6 +240,7 @@ import org.photonvision.EstimatedRobotPose;
 
         allTagPoses.clear();
 
+        // Check if we need to enable/disable a camera
         if(cameraEnum == CameraEnum.Camera1) {
             cam1Enabled = photonVisionEnableCam1.getBoolean(true);
         } else if(cameraEnum == CameraEnum.Camera2) {
@@ -246,64 +249,62 @@ import org.photonvision.EstimatedRobotPose;
 
          Optional<EstimatedRobotPose> visionEst = Optional.empty();
          for (var change : camera.getAllUnreadResults()) {
-             visionEst = photonEstimator.update(change);
-             updateEstimationStdDevs(visionEst, change.getTargets());
+            visionEst = photonEstimator.update(change);
+            updateEstimationStdDevs(visionEst, change.getTargets());
  
-             if (Robot.isSimulation()) {
-                 visionEst.ifPresentOrElse(
-                         est ->
-                                 getSimDebugField()
-                                         .getObject("VisionEstimation")
-                                         .setPose(est.estimatedPose.toPose2d()),
-                         () -> {
-                             getSimDebugField().getObject("VisionEstimation").setPoses();
-                         });
-             }
+            if (Robot.isSimulation()) {
+                visionEst.ifPresentOrElse(
+                        est ->
+                                getSimDebugField()
+                                        .getObject("VisionEstimation")
+                                        .setPose(est.estimatedPose.toPose2d()),
+                        () -> {
+                            getSimDebugField().getObject("VisionEstimation").setPoses();
+                        });
+            }
  
-             visionEst.ifPresent(
-                    est -> {
-                         // Change our trust in the measurement based on the tags we can see
-                         var estStdDevs = getEstimationStdDevs();
+            visionEst.ifPresent(
+            est -> {
+                // Change our trust in the measurement based on the tags we can see
+                var estStdDevs = getEstimationStdDevs();
  
-                         estConsumer.accept(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                estConsumer.accept(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
 
-                         if(cameraEnum == CameraEnum.Camera1) {
-                            Logger.recordOutput(
-								"PhotonVisionEstimator1/Robot",
-								est.estimatedPose.toPose2d());
-                         } else if(cameraEnum == CameraEnum.Camera2) {
-                            Logger.recordOutput(
-								"PhotonVisionEstimator2/Robot",
-								est.estimatedPose.toPose2d());
-                         }
-                        
-                        this.estimatedRobotPose = est;
-                        canSeeTag = true;
-
-                        if (Constants.kDebugPhotonVision) {
-
-			        	    for (PhotonTrackedTarget target : est.targetsUsed) {
-					            allTagPoses.add(
-						            aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
-					            );
-				            }
-
-                            if(cameraEnum == CameraEnum.Camera1) {
-                                Logger.recordOutput(
-			 		            "PhotonVision/TargetsUsed1",
-			 		                allTagPoses.toArray(new Pose3d[allTagPoses.size()])
-				                );
-                            } else {
-                                Logger.recordOutput(
-                                    "PhotonVision/TargetsUsed2",
-                                    allTagPoses.toArray(new Pose3d[allTagPoses.size()])
-                                );
-                            }
-				            
-			            }
-
+                if(cameraEnum == CameraEnum.Camera1) {
+                    Logger.recordOutput(
+				        "PhotonVisionEstimator1/Robot",
+						est.estimatedPose.toPose2d());
+                    } else if(cameraEnum == CameraEnum.Camera2) {
+                        Logger.recordOutput(
+							"PhotonVisionEstimator2/Robot",
+							est.estimatedPose.toPose2d());
                     }
-                );
+                        
+                    this.estimatedRobotPose = est;
+                    canSeeTag = true;
+
+                    if (Constants.kDebugPhotonVision) {
+			        	for (PhotonTrackedTarget target : est.targetsUsed) {
+					        allTagPoses.add(
+						        aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
+					        );
+				        }
+
+                        if(cameraEnum == CameraEnum.Camera1) {
+                            Logger.recordOutput(
+			 		        "PhotonVision/TargetsUsed1",
+			 		            allTagPoses.toArray(new Pose3d[allTagPoses.size()])
+				            );
+                        } else {
+                            Logger.recordOutput(
+                                "PhotonVision/TargetsUsed2",
+                                allTagPoses.toArray(new Pose3d[allTagPoses.size()])
+                            );
+                        }        
+			        }
+
+                }
+            );
 
             if(visionEst.isEmpty()) {
                 canSeeTag = false;

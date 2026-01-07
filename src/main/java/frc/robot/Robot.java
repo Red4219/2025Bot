@@ -24,7 +24,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 // This is needed for AdvantageScope
 public class Robot extends LoggedRobot {
-//public class Robot extends TimedRobot {
 	private Command autonomousCommand;
 	private ArmSubsystem armSubsystem = RobotContainer.armSubsystem;
 	private ElevatorSubsystem elevatorSystem = RobotContainer.elevatorSubsystem;
@@ -80,7 +79,6 @@ public class Robot extends LoggedRobot {
 		Logger.recordOutput("CAN/PercentBusUtilization", RobotController.getCANStatus().percentBusUtilization);
 		
 		int p = (int) gotoPositionSubscriber.get();
-		//System.out.println("gotoPosition " + p);
 
 		switch(p) {
 			case -1:
@@ -114,8 +112,6 @@ public class Robot extends LoggedRobot {
 		elevatorSystem = RobotContainer.elevatorSubsystem;
 		armSubsystem.setDesiredState(ArmSubsystem.ArmState.Start);
 		elevatorSystem.setDesiredState(ElevatorSubsystem.ElevatorState.Start);
-		
-		//robotContainer.setupAuto(true);
 	}
 
 	@Override
@@ -125,7 +121,6 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void autonomousInit() {
-		//robotContainer.setupAuto(false);
 		
 		autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -141,7 +136,6 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void teleopInit() {
-		//robotContainer.setupAuto(false);
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
@@ -165,12 +159,11 @@ public class Robot extends LoggedRobot {
 
 	@Override
 	public void simulationInit() {
-		//simulator = REVPhysicsSim.getInstance();
-		//simulator.run();
+		
 	}
 
 	@Override
 	public void simulationPeriodic() {
-		//REVPhysicsSim.getInstance().run();
+		
 	}
 }
